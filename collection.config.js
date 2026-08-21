@@ -8,16 +8,16 @@
 
 const collection = {
   // What does your archive collect? e.g. "Khmer Proverbs"
-  name: "My Collection",
+  name: "Echoes of my hometown",
 
   // One sentence: what is this archive, and why does it matter?
-  description: "A living archive of a piece of Khmer culture, built for ICT 340.",
+  description: "A community archive of photos and short stories about local places that have changed or disappeared over time, and what they meant to the people who remember them.",
 
   // Who is building this archive? Your name, as you want it shown.
   curator: "Chheav Kimheng",
 
   // Where does your knowledge come from? A person, a place, a community.
-  source: "To be gathered",
+  source: "Contributed by older family members and long-time residents, from personal photos and firsthand memories.",
 };
 
 export default collection;
