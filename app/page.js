@@ -1,4 +1,5 @@
 import collection from "../collection.config.js";
+import EntryCard from "../components/EntryCard.js";
 
 const styles = {
   wrap: {
@@ -72,7 +73,13 @@ export default function Home() {
         <p style={styles.cardValue}>{collection.source}</p>
       </div>
 
-      <p style={styles.count}>entries in the archive: 0 (for now)</p>
+      {collection.entries.map((entry, index) => (
+        <EntryCard key={index} {...entry} />
+      ))}
+
+      <p style={styles.count}>
+        entries in the archive: {collection.entries.length} (for now)
+      </p>
 
       <footer style={styles.footer}>
         Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall
