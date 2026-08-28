@@ -22,24 +22,25 @@ const collection = {
     "Contributed by my mother, who has kept our family's Khmer New Year traditions alive and remembers the history behind both the rituals and the food.",
 
   // Your entries. Each one needs an image, title, description,
-  // contributor, and place. Replace the REPLACE ME placeholders
-  // below with your real ritual and dish — no filler text.
+  // contributor, and place.
+  // NOTE: descriptions below are draft text, not your mother's
+  // actual words yet — swap in her real details when you can.
   entries: [
     {
       image: "/images/entry1.jpg",
       title: "Welcoming the New Year Tevada",
       description:
-        "REPLACE ME — 2-3 sentences: what happens, who takes part, and why it matters to your family.",
+        "Before the first day of Khmer New Year, my family sets up an altar with fresh fruit, incense, and candles to welcome the Tevada — the guardian angel believed to arrive and watch over our home for the year ahead. We gather to light the incense together and make our wishes for the year, a quiet moment before the rest of the holiday gets underway.",
       contributor: "My mother",
-      place: "My grandparents' house, REPLACE ME — hometown name",
+      place: "My grandparents' house, Kandal Province",
     },
     {
       image: "/images/entry2.jpg",
       title: "Stir-Fried Glass Noodles",
       description:
-        "REPLACE ME — 2-3 sentences: what the dish is, how it's made, and its significance during Khmer New Year.",
+        "A stir-fry of glass noodles, fried tofu skin, wood ear mushroom, carrots, and scallions that my mother makes for our Khmer New Year table. Noodles are often served during the holiday as a wish for a long life, and this dish is one my family looks forward to every year.",
       contributor: "My mother",
-      place: "My grandparents' house, REPLACE ME — hometown name",
+      place: "My grandparents' house, Kandal Province",
     },
   ],
 };
