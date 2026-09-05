@@ -2,8 +2,8 @@ const styles = {
   card: {
     marginTop: 24,
     padding: 24,
-    backgroundColor: "#1C222C",
-    border: "1px solid #2E3644",
+    backgroundColor: "#FFFBF0",
+    border: "1px solid #D4AF37",
     borderRadius: 10,
   },
   image: {
@@ -16,12 +16,13 @@ const styles = {
   label: {
     fontFamily: "'Courier New', monospace",
     fontSize: 12,
-    color: "#97A1B3",
+    color: "#A6192E",
     margin: "12px 0 0",
   },
   value: {
     fontSize: 16,
     margin: "6px 0 0",
+    color: "#3D2817",
   },
 };
 
