@@ -1,206 +1,223 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import collection from "../collection.config.js";
 import entries from "../data/entries.js";
 import translations from "../data/translations.js";
-import EntryCard from "../components/EntryCard.js";
+import { useLanguage } from "../context/LanguageContext.js";
+import { useScrollReveal } from "../hooks/useScrollReveal.js";
+
+function truncate(text, maxLength) {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength).trim() + "…";
+}
 
 const styles = {
-  wrap: {
-    maxWidth: 720,
-    margin: "40px auto",
-    padding: "64px 40px",
-    backgroundColor: "#FDF6E3",
-    color: "#3D2817",
-    borderRadius: 20,
-    border: "1px solid #D4AF37",
-    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4)",
-  },
   kicker: {
-    fontFamily: "'Courier New', monospace",
-    color: "#E8871E",
-    fontSize: 14,
-    letterSpacing: 1,
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontStyle: "italic",
+    color: "#C97B5B",
+    fontSize: 16,
   },
   title: {
+    fontFamily: "Georgia, 'Times New Roman', serif",
     fontSize: 48,
     fontWeight: 700,
     margin: "16px 0 12px",
-    lineHeight: 1.1,
-    color: "#A6192E",
+    lineHeight: 1.15,
+    color: "#2D5F4C",
   },
   description: {
     fontSize: 18,
-    color: "#7A5C3E",
+    color: "#6B6B63",
     lineHeight: 1.6,
     margin: 0,
   },
   card: {
-    marginTop: 48,
+    marginTop: 24,
     padding: 24,
-    backgroundColor: "#FFFBF0",
-    border: "1px solid #D4AF37",
+    backgroundColor: "#FCFAF5",
+    border: "1px solid #D8DED5",
     borderRadius: 10,
   },
   cardLabel: {
-    fontFamily: "'Courier New', monospace",
     fontSize: 12,
-    color: "#A6192E",
+    fontWeight: 700,
+    color: "#2D5F4C",
     margin: 0,
   },
   cardValue: {
     fontSize: 16,
     margin: "6px 0 0",
   },
-  langToggle: {
-    display: "flex",
-    gap: 8,
-    marginTop: 48,
+  intro: {
+    marginTop: 56,
+    paddingTop: 40,
+    borderTop: "1px solid #D8DED5",
   },
-  langButton: {
-    padding: "6px 16px",
-    fontFamily: "'Courier New', monospace",
-    fontSize: 13,
-    fontWeight: 600,
-    border: "1px solid #D4AF37",
-    borderRadius: 20,
-    backgroundColor: "transparent",
-    color: "#7A5C3E",
-    cursor: "pointer",
-  },
-  langButtonActive: {
-    backgroundColor: "#A6192E",
-    color: "#FDF6E3",
-    borderColor: "#A6192E",
-  },
-  count: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 14,
-    color: "#E8871E",
-    marginTop: 48,
-  },
-  footer: {
-    marginTop: 64,
-    paddingTop: 24,
-    borderTop: "1px solid #D4AF37",
-    fontSize: 13,
-    color: "#8B6F47",
-  },
-  searchInput: {
-    width: "100%",
-    marginTop: 16,
-    padding: "12px 16px",
+  introParagraph: {
     fontSize: 16,
-    color: "#3D2817",
-    backgroundColor: "#FFFBF0",
-    border: "1px solid #D4AF37",
-    borderRadius: 8,
-    boxSizing: "border-box",
+    lineHeight: 1.8,
+    color: "#2B2B2B",
+    marginBottom: 16,
   },
-  emptyState: {
-    marginTop: 24,
-    padding: 24,
-    border: "1px solid #D4AF37",
-    borderRadius: 10,
-    color: "#7A5C3E",
+  featuresSection: {
+    marginTop: 64,
+    display: "flex",
+    flexDirection: "column",
+    gap: 56,
+  },
+  featureTitle: {
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontSize: 26,
+    fontWeight: 700,
+    color: "#2D5F4C",
+    margin: "0 0 12px",
+  },
+  featureExcerpt: {
+    fontSize: 16,
+    lineHeight: 1.7,
+    color: "#2B2B2B",
+    margin: 0,
+  },
+  ctaWrap: {
+    marginTop: 56,
+  },
+  ctaButton: {
+    display: "inline-block",
+    padding: "14px 32px",
+    color: "#FCFAF5",
+    fontSize: 16,
+    fontWeight: 600,
+    textDecoration: "none",
+    borderRadius: 8,
   },
 };
 
-export default function Home() {
-  const [query, setQuery] = useState("");
-  const [lang, setLang] = useState("en");
+// Its own component so useScrollReveal gets a fresh, independent hook
+// instance per row — calling the hook inside .map() directly would
+// break React's rules of hooks.
+function FeatureRow({ entryId, entryImage, imageOnRight, displayTitle, displayDescription }) {
+  const [rowRef, rowVisible] = useScrollReveal();
 
-  const filteredEntries = entries.filter((entry) => {
-    const q = query.toLowerCase();
-    return (
-      entry.title.toLowerCase().includes(q) ||
-      entry.description.toLowerCase().includes(q)
-    );
-  });
+  const media = (
+    <div className="feature-row-media" key="media">
+      {entryImage && <img src={entryImage} alt={displayTitle} />}
+    </div>
+  );
+  const text = (
+    <div className="feature-row-text" key="text">
+      <h3 style={styles.featureTitle}>{displayTitle}</h3>
+      <p style={styles.featureExcerpt}>
+        {truncate(displayDescription, 170)}
+      </p>
+    </div>
+  );
 
   return (
-    <main style={styles.wrap}>
-      <p style={styles.kicker}>KHMER LIVING ARCHIVE</p>
-      <h1 style={styles.title}>{collection.name}</h1>
-      <p style={styles.description}>{collection.description}</p>
+    <Link
+      href={`/entries/${entryId}`}
+      ref={rowRef}
+      className={`feature-row fade-in-on-scroll ${
+        rowVisible ? "is-visible" : ""
+      }`}
+    >
+      {imageOnRight ? [text, media] : [media, text]}
+    </Link>
+  );
+}
 
-      <div style={styles.card}>
-        <p style={styles.cardLabel}>CURATED BY</p>
-        <p style={styles.cardValue}>{collection.curator}</p>
-      </div>
-      <div style={styles.card}>
-        <p style={styles.cardLabel}>SOURCE</p>
-        <p style={styles.cardValue}>{collection.source}</p>
-      </div>
+export default function Home() {
+  const { lang } = useLanguage();
+  const t = translations[lang]?.ui ?? translations.en.ui;
+  const archiveName = lang === "km" ? t.archive_name : collection.name;
+  const archiveDescription =
+    lang === "km" ? t.archive_description : collection.description;
+  const archiveSource = lang === "km" ? t.archive_source : collection.source;
+  const curatorName = lang === "km" ? t.curator_name : collection.curator;
+  const featuredEntries = entries.slice(0, 3);
 
-      <div style={styles.langToggle}>
-        <button
-          type="button"
-          onClick={() => setLang("en")}
-          style={{
-            ...styles.langButton,
-            ...(lang === "en" ? styles.langButtonActive : {}),
-          }}
-        >
-          EN
-        </button>
-        <button
-          type="button"
-          onClick={() => setLang("km")}
-          style={{
-            ...styles.langButton,
-            ...(lang === "km" ? styles.langButtonActive : {}),
-          }}
-        >
-          KM
-        </button>
-      </div>
+  const [curatedRef, curatedVisible] = useScrollReveal();
+  const [sourceRef, sourceVisible] = useScrollReveal();
+  const [introRef, introVisible] = useScrollReveal();
+  const [ctaRef, ctaVisible] = useScrollReveal();
 
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search entries..."
-        aria-label="Search entries"
-        style={styles.searchInput}
-      />
-
-      {filteredEntries.length === 0 ? (
-        <div style={styles.emptyState}>
-          <p>
-            {lang === "km"
-              ? "រកមិនឃើញធាតុណាដែលត្រូវនឹងការស្វែងរករបស់អ្នកទេ។"
-              : "No entries match your search."}
-          </p>
-        </div>
-      ) : (
-        filteredEntries.map((entry) => {
-          const t = translations.km[entry.id];
-          const displayTitle =
-            lang === "km" && t?.title ? t.title : entry.title;
-          const displayDescription =
-            lang === "km" && t?.description ? t.description : entry.description;
-          return (
-            <EntryCard
-              key={entry.id}
-              {...entry}
-              title={displayTitle}
-              description={displayDescription}
-            />
-          );
-        })
-      )}
-
-      <p style={styles.count}>
-        entries in the archive: {entries.length} (for now)
+  return (
+    <main className="page-container">
+      <p className="fade-in-up" style={styles.kicker}>
+        {t.hero_kicker}
+      </p>
+      <h1 className="fade-in-up" style={styles.title}>
+        {archiveName}
+      </h1>
+      <p className="fade-in-up" style={styles.description}>
+        {archiveDescription}
       </p>
 
-      <footer style={styles.footer}>
-        Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall
-        2026. This archive is under construction all semester. Come back in
-        December.
-      </footer>
+      <div
+        ref={curatedRef}
+        className={`fade-in-on-scroll ${curatedVisible ? "is-visible" : ""}`}
+      >
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>{t.curated_by}</p>
+          <p style={styles.cardValue}>{curatorName}</p>
+        </div>
+      </div>
+      <div
+        ref={sourceRef}
+        className={`fade-in-on-scroll ${sourceVisible ? "is-visible" : ""}`}
+      >
+        <div style={styles.card}>
+          <p style={styles.cardLabel}>{t.source_label}</p>
+          <p style={styles.cardValue}>{archiveSource}</p>
+        </div>
+      </div>
+
+      <div
+        ref={introRef}
+        className={`fade-in-on-scroll ${introVisible ? "is-visible" : ""}`}
+        style={styles.intro}
+      >
+        {t.landing_intro.map((paragraph, i) => (
+          <p key={i} style={styles.introParagraph}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
+
+      <div style={styles.featuresSection}>
+        {featuredEntries.map((entry, index) => {
+          const km = translations.km[entry.id];
+          const displayTitle =
+            lang === "km" && km?.title ? km.title : entry.title;
+          const displayDescription =
+            lang === "km" && km?.description
+              ? km.description
+              : entry.description;
+          const imageOnRight = index !== 1;
+
+          return (
+            <FeatureRow
+              key={entry.id}
+              entryId={entry.id}
+              entryImage={entry.image}
+              imageOnRight={imageOnRight}
+              displayTitle={displayTitle}
+              displayDescription={displayDescription}
+            />
+          );
+        })}
+      </div>
+
+      <div
+        ref={ctaRef}
+        className={`fade-in-on-scroll ${ctaVisible ? "is-visible" : ""}`}
+        style={styles.ctaWrap}
+      >
+        <Link href="/entries" className="cta-button" style={styles.ctaButton}>
+          {t.cta_button}
+        </Link>
+      </div>
     </main>
   );
 }
