@@ -8,16 +8,50 @@ import EntryCard from "../../components/EntryCard.js";
 import { useLanguage } from "../../context/LanguageContext.js";
 import { useScrollReveal } from "../../hooks/useScrollReveal.js";
 
+function ClearIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 const styles = {
+  searchWrap: {
+    position: "relative",
+  },
   searchInput: {
     width: "100%",
-    padding: "14px 18px",
+    padding: "14px 44px 14px 18px",
     fontSize: 16,
     color: "#2B2B2B",
     backgroundColor: "#FCFAF5",
     border: "1px solid #D8DED5",
     borderRadius: 10,
     boxSizing: "border-box",
+  },
+  clearButton: {
+    position: "absolute",
+    right: 14,
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "none",
+    border: "none",
+    color: "#6B6B63",
+    cursor: "pointer",
+    padding: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
   emptyState: {
     marginTop: 32,
@@ -50,7 +84,7 @@ export default function EntriesPage() {
 
   // Matches either language, regardless of which one is displayed.
   const filteredEntries = entries.filter((entry) => {
-    const q = query.toLowerCase();
+    const q = query.trim().toLowerCase();
     const km = translations.km[entry.id];
     return (
       entry.title.toLowerCase().includes(q) ||
@@ -62,14 +96,26 @@ export default function EntriesPage() {
 
   return (
     <main className="page-container wide">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={t.search_placeholder}
-        aria-label={t.search_placeholder}
-        style={styles.searchInput}
-      />
+      <div style={styles.searchWrap}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t.search_placeholder}
+          aria-label={t.search_placeholder}
+          style={styles.searchInput}
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            aria-label="Clear search"
+            style={styles.clearButton}
+          >
+            <ClearIcon />
+          </button>
+        )}
+      </div>
 
       {filteredEntries.length === 0 ? (
         <div style={styles.emptyState}>
