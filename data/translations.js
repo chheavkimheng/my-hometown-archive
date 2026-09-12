@@ -17,7 +17,7 @@ const translations = {
     ui: {
       nav_home: "Home",
       nav_entries: "Entries",
-      search_placeholder: "Search entries...",
+      search_placeholder: "Search by title, description, or keyword — English or Khmer",
       no_results: "No entries match your search.",
       back_to_entries: "Back to entries",
       curated_by: "Curated by",
@@ -96,7 +96,7 @@ const translations = {
     ui: {
       nav_home: "ទំព័រដើម",
       nav_entries: "ធាតុទាំងអស់",
-      search_placeholder: "ស្វែងរកធាតុ...",
+      search_placeholder: "ស្វែងរកតាមចំណងជើង ខ្លឹមសារ ឬពាក្យគន្លឹះ ជាភាសាខ្មែរ ឬអង់គ្លេស",
       no_results: "រកមិនឃើញធាតុណាដែលត្រូវនឹងការស្វែងរករបស់អ្នកទេ។",
       back_to_entries: "ត្រឡប់ទៅធាតុទាំងអស់",
       curated_by: "រៀបចំដោយ",
