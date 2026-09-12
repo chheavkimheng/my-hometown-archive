@@ -96,7 +96,7 @@ export default function EntryDetail({ entry, translation }) {
     lang === "km" && translation?.place ? translation.place : entry.place;
 
   return (
-    <main className="page-container">
+    <main className="page-container fade-in-up">
       <button
         type="button"
         onClick={() => router.back()}
