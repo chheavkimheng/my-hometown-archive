@@ -49,14 +49,40 @@ const styles = {
 
 // Real SVG flags instead of emoji — emoji flags fall back to plain
 // two-letter text on Windows/Chrome, which is what showed up as "GB".
-function UKFlagIcon() {
+function USAFlagIcon() {
   return (
     <svg width="24" height="16" viewBox="0 0 60 40" style={{ display: "block" }}>
-      <rect width="60" height="40" fill="#012169" />
-      <path d="M0,0 L60,40 M60,0 L0,40" stroke="#FFFFFF" strokeWidth="8" />
-      <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" strokeWidth="4" />
-      <path d="M30,0 L30,40 M0,20 L60,20" stroke="#FFFFFF" strokeWidth="12" />
-      <path d="M30,0 L30,40 M0,20 L60,20" stroke="#C8102E" strokeWidth="6" />
+      <rect width="60" height="40" fill="#B22234" />
+      <rect y="3.08" width="60" height="3.08" fill="#FFFFFF" />
+      <rect y="9.23" width="60" height="3.08" fill="#FFFFFF" />
+      <rect y="15.38" width="60" height="3.08" fill="#FFFFFF" />
+      <rect y="21.54" width="60" height="3.08" fill="#FFFFFF" />
+      <rect y="27.69" width="60" height="3.08" fill="#FFFFFF" />
+      <rect y="33.85" width="60" height="3.08" fill="#FFFFFF" />
+      <rect width="24" height="21.54" fill="#3C3B6E" />
+      <g fill="#FFFFFF">
+        <circle cx="4" cy="3" r="1" />
+        <circle cx="9" cy="3" r="1" />
+        <circle cx="14" cy="3" r="1" />
+        <circle cx="19" cy="3" r="1" />
+        <circle cx="6.5" cy="6" r="1" />
+        <circle cx="11.5" cy="6" r="1" />
+        <circle cx="16.5" cy="6" r="1" />
+        <circle cx="4" cy="9" r="1" />
+        <circle cx="9" cy="9" r="1" />
+        <circle cx="14" cy="9" r="1" />
+        <circle cx="19" cy="9" r="1" />
+        <circle cx="6.5" cy="12" r="1" />
+        <circle cx="11.5" cy="12" r="1" />
+        <circle cx="16.5" cy="12" r="1" />
+        <circle cx="4" cy="15" r="1" />
+        <circle cx="9" cy="15" r="1" />
+        <circle cx="14" cy="15" r="1" />
+        <circle cx="19" cy="15" r="1" />
+        <circle cx="6.5" cy="18" r="1" />
+        <circle cx="11.5" cy="18" r="1" />
+        <circle cx="16.5" cy="18" r="1" />
+      </g>
     </svg>
   );
 }
@@ -105,7 +131,7 @@ export default function Header() {
         aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
         style={styles.langButton}
       >
-        {lang === "en" ? <CambodiaFlagIcon /> : <UKFlagIcon />}
+        {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
       </button>
     </header>
   );
