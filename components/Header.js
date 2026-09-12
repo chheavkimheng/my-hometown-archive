@@ -14,6 +14,9 @@ const styles = {
     padding: "20px 32px",
     backgroundColor: "#2D5F4C",
     color: "#FFFFFF",
+    position: "sticky",
+    top: 0,
+    zIndex: 50,
   },
   siteName: {
     fontSize: 18,
