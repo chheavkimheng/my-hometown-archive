@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
 
@@ -17,6 +17,8 @@ const styles = {
     textDecoration: "none",
     fontSize: 14,
     fontWeight: 600,
+    fontFamily: "inherit",
+    cursor: "pointer",
   },
   image: {
     width: "100%",
@@ -77,6 +79,7 @@ function BackArrowIcon() {
 
 export default function EntryDetail({ entry, translation }) {
   const { lang } = useLanguage();
+  const router = useRouter();
   const t = translations[lang]?.ui ?? translations.en.ui;
 
   const displayTitle =
@@ -94,10 +97,15 @@ export default function EntryDetail({ entry, translation }) {
 
   return (
     <main className="page-container">
-      <Link href="/entries" className="back-button" style={styles.backButton}>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="back-button"
+        style={styles.backButton}
+      >
         <BackArrowIcon />
         {t.back_to_entries}
-      </Link>
+      </button>
 
       {entry.image && (
         <img src={entry.image} alt={displayTitle} style={styles.image} />
