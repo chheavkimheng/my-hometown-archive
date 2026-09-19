@@ -1,9 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import collection from "../collection.config.js";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
+import { createClient } from "../utils/supabase/client.js";
 
 const styles = {
   header: {
@@ -35,8 +38,32 @@ const styles = {
     color: "#FFFFFF",
     textDecoration: "none",
   },
-  langButton: {
+  rightGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
     justifySelf: "end",
+  },
+  userEmail: {
+    fontSize: 14,
+    color: "#FFFFFF",
+    opacity: 0.9,
+    maxWidth: 160,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  authButton: {
+    padding: "6px 14px",
+    fontSize: 14,
+    fontWeight: 600,
+    color: "#2D5F4C",
+    backgroundColor: "#FFFFFF",
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  langButton: {
     display: "flex",
     alignItems: "center",
     padding: "6px 10px",
@@ -47,8 +74,6 @@ const styles = {
   },
 };
 
-// Real SVG flags instead of emoji — emoji flags fall back to plain
-// two-letter text on Windows/Chrome, which is what showed up as "GB".
 function USAFlagIcon() {
   return (
     <svg width="24" height="16" viewBox="0 0 60 40" style={{ display: "block" }}>
@@ -109,6 +134,31 @@ export default function Header() {
   const { lang, toggleLang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
   const siteName = lang === "km" ? t.archive_name : collection.name;
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <header style={styles.header}>
@@ -125,14 +175,34 @@ export default function Header() {
         </Link>
       </nav>
 
-      <button
-        type="button"
-        onClick={toggleLang}
-        aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
-        style={styles.langButton}
-      >
-        {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
-      </button>
+      <div style={styles.rightGroup}>
+        {user ? (
+          <>
+            <span style={styles.userEmail}>{user.email}</span>
+            <button type="button" onClick={handleLogout} style={styles.authButton}>
+              Log out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className="nav-link" style={styles.navLink}>
+              Log in
+            </Link>
+            <Link href="/signup" className="nav-link" style={styles.navLink}>
+              Sign up
+            </Link>
+          </>
+        )}
+
+        <button
+          type="button"
+          onClick={toggleLang}
+          aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
+          style={styles.langButton}
+        >
+          {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
+        </button>
+      </div>
     </header>
   );
 }
