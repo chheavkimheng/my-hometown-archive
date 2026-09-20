@@ -67,6 +67,14 @@ body {
   transform: translateX(-3px);
 }
 
+/* Visible focus state for all inputs — was missing everywhere,
+   not just on the new auth forms. */
+input:focus {
+  outline: none;
+  border-color: #2D5F4C;
+  box-shadow: 0 0 0 3px rgba(45, 95, 76, 0.15);
+}
+
 /* Entry card hover: subtle lift + shadow. */
 .entry-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -127,6 +135,27 @@ body {
   background-color: #24493A;
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 12px 24px rgba(45, 95, 76, 0.3);
+}
+
+/* Auth form inputs and submit button. */
+.auth-input {
+  transition: border-color 0.2s ease;
+}
+.auth-input:focus {
+  outline: none;
+  border-color: #2D5F4C;
+}
+
+.auth-submit {
+  background-color: #2D5F4C;
+  transition: background-color 0.2s ease;
+}
+.auth-submit:hover:not(:disabled) {
+  background-color: #24493A;
+}
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* Animation utilities — slow and smooth, per request. */
