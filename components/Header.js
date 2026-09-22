@@ -180,16 +180,16 @@ export default function Header() {
           <>
             <span style={styles.userEmail}>{user.email}</span>
             <button type="button" onClick={handleLogout} style={styles.authButton}>
-              Log out
+              {t.nav_logout}
             </button>
           </>
         ) : (
           <>
             <Link href="/login" className="nav-link" style={styles.navLink}>
-              Log in
+              {t.nav_login}
             </Link>
             <Link href="/signup" className="nav-link" style={styles.navLink}>
-              Sign up
+              {t.nav_signup}
             </Link>
           </>
         )}

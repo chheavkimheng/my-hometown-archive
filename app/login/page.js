@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../utils/supabase/client.js";
+import translations from "../../data/translations.js";
+import { useLanguage } from "../../context/LanguageContext.js";
 
 const styles = {
   wrap: {
@@ -88,6 +90,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { lang } = useLanguage();
+  const t = translations[lang]?.ui ?? translations.en.ui;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -105,7 +109,7 @@ export default function LoginPage() {
     // Deliberately generic, always exactly this string: never reveal
     // whether the email exists or the password was wrong.
     if (signInError) {
-      setError("Invalid email or password");
+      setError(t.login_error);
       return;
     }
 
@@ -117,12 +121,12 @@ export default function LoginPage() {
     <main className="page-container">
       <div style={styles.wrap}>
         <div className="fade-in-up" style={styles.card}>
-          <p style={styles.kicker}>Khmer Living Archive</p>
-          <h1 style={styles.title}>Log In</h1>
+          <p style={styles.kicker}>{t.hero_kicker}</p>
+          <h1 style={styles.title}>{t.login_title}</h1>
           <form style={styles.form} onSubmit={handleSubmit}>
             <div>
               <label style={styles.label} htmlFor="email">
-                Email
+                {t.email_label}
               </label>
               <input
                 id="email"
@@ -135,7 +139,7 @@ export default function LoginPage() {
             </div>
             <div>
               <label style={styles.label} htmlFor="password">
-                Password
+                {t.password_label}
               </label>
               <input
                 id="password"
@@ -157,13 +161,13 @@ export default function LoginPage() {
                 cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              {loading ? "Logging in..." : "Log In"}
+              {loading ? t.login_button_loading : t.login_button}
             </button>
           </form>
           <p style={styles.switchLink}>
-            Don&apos;t have an account?{" "}
+            {t.no_account_prompt}{" "}
             <Link href="/signup" style={styles.link}>
-              Sign up
+              {t.nav_signup}
             </Link>
           </p>
         </div>

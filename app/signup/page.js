@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../../utils/supabase/client.js";
+import translations from "../../data/translations.js";
+import { useLanguage } from "../../context/LanguageContext.js";
 
 const styles = {
   wrap: {
@@ -88,6 +90,8 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { lang } = useLanguage();
+  const t = translations[lang]?.ui ?? translations.en.ui;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,7 +107,7 @@ export default function SignupPage() {
     setLoading(false);
 
     if (signUpError) {
-      setError("Could not create account. Please try again.");
+      setError(t.signup_error);
       return;
     }
 
@@ -115,12 +119,12 @@ export default function SignupPage() {
     <main className="page-container">
       <div style={styles.wrap}>
         <div className="fade-in-up" style={styles.card}>
-          <p style={styles.kicker}>Khmer Living Archive</p>
-          <h1 style={styles.title}>Sign Up</h1>
+          <p style={styles.kicker}>{t.hero_kicker}</p>
+          <h1 style={styles.title}>{t.signup_title}</h1>
           <form style={styles.form} onSubmit={handleSubmit}>
             <div>
               <label style={styles.label} htmlFor="email">
-                Email
+                {t.email_label}
               </label>
               <input
                 id="email"
@@ -133,7 +137,7 @@ export default function SignupPage() {
             </div>
             <div>
               <label style={styles.label} htmlFor="password">
-                Password
+                {t.password_label}
               </label>
               <input
                 id="password"
@@ -156,13 +160,13 @@ export default function SignupPage() {
                 cursor: loading ? "not-allowed" : "pointer",
               }}
             >
-              {loading ? "Creating account..." : "Sign Up"}
+              {loading ? t.signup_button_loading : t.signup_button}
             </button>
           </form>
           <p style={styles.switchLink}>
-            Already have an account?{" "}
+            {t.have_account_prompt}{" "}
             <Link href="/login" style={styles.link}>
-              Log in
+              {t.nav_login}
             </Link>
           </p>
         </div>
