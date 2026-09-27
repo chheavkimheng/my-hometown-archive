@@ -171,6 +171,39 @@ export default function Home() {
   const [introRef, introVisible] = useScrollReveal();
   const [ctaRef, ctaVisible] = useScrollReveal();
 
+  let entriesContent;
+  if (loading) {
+    entriesContent = <p style={styles.statusText}>Loading entries…</p>;
+  } else if (featuredEntries.length === 0) {
+    entriesContent = <p style={styles.statusText}>{t.no_results}</p>;
+  } else {
+    entriesContent = (
+      <div style={styles.featuresSection}>
+        {featuredEntries.map((entry, index) => {
+          const km = translations.km[entry.slug];
+          const displayTitle =
+            lang === "km" && km?.title ? km.title : entry.title;
+          const displayDescription =
+            lang === "km" && km?.description
+              ? km.description
+              : entry.description;
+          const imageOnRight = index !== 1;
+
+          return (
+            <FeatureRow
+              key={entry.id}
+              entryId={entry.id}
+              entryImage={entry.image}
+              imageOnRight={imageOnRight}
+              displayTitle={displayTitle}
+              displayDescription={displayDescription}
+            />
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <main className="page-container">
       <p className="fade-in-up" style={styles.kicker}>
@@ -207,42 +240,14 @@ export default function Home() {
         className={`fade-in-on-scroll ${introVisible ? "is-visible" : ""}`}
         style={styles.intro}
       >
-        {t.landing_intro.map((paragraph, i) => (
-          <p key={i} style={styles.introParagraph}>
+        {t.landing_intro.map((paragraph) => (
+          <p key={paragraph} style={styles.introParagraph}>
             {paragraph}
           </p>
         ))}
       </div>
 
-      {loading ? (
-        <p style={styles.statusText}>Loading entries…</p>
-      ) : featuredEntries.length === 0 ? (
-        <p style={styles.statusText}>{t.no_results}</p>
-      ) : (
-        <div style={styles.featuresSection}>
-          {featuredEntries.map((entry, index) => {
-            const km = translations.km[entry.slug];
-            const displayTitle =
-              lang === "km" && km?.title ? km.title : entry.title;
-            const displayDescription =
-              lang === "km" && km?.description
-                ? km.description
-                : entry.description;
-            const imageOnRight = index !== 1;
-
-            return (
-              <FeatureRow
-                key={entry.id}
-                entryId={entry.id}
-                entryImage={entry.image}
-                imageOnRight={imageOnRight}
-                displayTitle={displayTitle}
-                displayDescription={displayDescription}
-              />
-            );
-          })}
-        </div>
-      )}
+      {entriesContent}
 
       <div
         ref={ctaRef}

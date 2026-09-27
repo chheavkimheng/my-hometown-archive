@@ -113,10 +113,61 @@ export default function EntriesPage() {
     return (
       entry.title.toLowerCase().includes(q) ||
       entry.description.toLowerCase().includes(q) ||
-      (km?.title && km.title.toLowerCase().includes(q)) ||
-      (km?.description && km.description.toLowerCase().includes(q))
+      km?.title.toLowerCase().includes(q) ||
+      km?.description.toLowerCase().includes(q)
     );
   });
+
+  let entriesContent;
+  if (loading) {
+    entriesContent = (
+      <div style={styles.emptyState}>
+        <p>Loading entries…</p>
+      </div>
+    );
+  } else if (filteredEntries.length === 0) {
+    entriesContent = (
+      <div style={styles.emptyState}>
+        <p>{t.no_results}</p>
+      </div>
+    );
+  } else {
+    entriesContent = (
+      <div
+        ref={gridRef}
+        className={`entries-grid fade-in-on-scroll ${
+          gridVisible ? "is-visible" : ""
+        }`}
+        style={styles.gridWrap}
+      >
+        {filteredEntries.map((entry) => {
+          const km = translations.km[entry.slug];
+          const displayTitle =
+            lang === "km" && km?.title ? km.title : entry.title;
+          const displayDescription =
+            lang === "km" && km?.description
+              ? km.description
+              : entry.description;
+          const displayPlace =
+            lang === "km" && km?.place ? km.place : entry.place;
+          return (
+            <Link
+              key={entry.id}
+              href={`/entries/${entry.id}`}
+              style={styles.cardLink}
+            >
+              <EntryCard
+                {...entry}
+                title={displayTitle}
+                description={displayDescription}
+                place={displayPlace}
+              />
+            </Link>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <main className="page-container wide">
@@ -141,49 +192,7 @@ export default function EntriesPage() {
         )}
       </div>
 
-      {loading ? (
-        <div style={styles.emptyState}>
-          <p>Loading entries…</p>
-        </div>
-      ) : filteredEntries.length === 0 ? (
-        <div style={styles.emptyState}>
-          <p>{t.no_results}</p>
-        </div>
-      ) : (
-        <div
-          ref={gridRef}
-          className={`entries-grid fade-in-on-scroll ${
-            gridVisible ? "is-visible" : ""
-          }`}
-          style={styles.gridWrap}
-        >
-          {filteredEntries.map((entry) => {
-            const km = translations.km[entry.slug];
-            const displayTitle =
-              lang === "km" && km?.title ? km.title : entry.title;
-            const displayDescription =
-              lang === "km" && km?.description
-                ? km.description
-                : entry.description;
-            const displayPlace =
-              lang === "km" && km?.place ? km.place : entry.place;
-            return (
-              <Link
-                key={entry.id}
-                href={`/entries/${entry.id}`}
-                style={styles.cardLink}
-              >
-                <EntryCard
-                  {...entry}
-                  title={displayTitle}
-                  description={displayDescription}
-                  place={displayPlace}
-                />
-              </Link>
-            );
-          })}
-        </div>
-      )}
+      {entriesContent}
 
       <p style={styles.count}>
         {t.entries_count_prefix} {entries.length} {t.entries_count_suffix}
