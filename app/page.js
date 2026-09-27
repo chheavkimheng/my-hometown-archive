@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import collection from "../collection.config.js";
-import entries from "../data/entries.js";
 import translations from "../data/translations.js";
+import { createClient } from "../utils/supabase/client.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
 
@@ -92,11 +93,13 @@ const styles = {
     textDecoration: "none",
     borderRadius: 8,
   },
+  statusText: {
+    marginTop: 40,
+    fontSize: 15,
+    color: "#6B6B63",
+  },
 };
 
-// Its own component so useScrollReveal gets a fresh, independent hook
-// instance per row — calling the hook inside .map() directly would
-// break React's rules of hooks.
 function FeatureRow({ entryId, entryImage, imageOnRight, displayTitle, displayDescription }) {
   const [rowRef, rowVisible] = useScrollReveal();
 
@@ -135,6 +138,32 @@ export default function Home() {
     lang === "km" ? t.archive_description : collection.description;
   const archiveSource = lang === "km" ? t.archive_source : collection.source;
   const curatorName = lang === "km" ? t.curator_name : collection.curator;
+
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    async function loadEntries() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("entries")
+        .select("id, slug, title, description, image:photo_url")
+        .order("created_at", { ascending: false });
+
+      if (!active) return;
+      if (error) {
+        console.error("Failed to load entries:", error);
+      }
+      setEntries(data ?? []);
+      setLoading(false);
+    }
+    loadEntries();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const featuredEntries = entries.slice(0, 3);
 
   const [curatedRef, curatedVisible] = useScrollReveal();
@@ -185,29 +214,35 @@ export default function Home() {
         ))}
       </div>
 
-      <div style={styles.featuresSection}>
-        {featuredEntries.map((entry, index) => {
-          const km = translations.km[entry.id];
-          const displayTitle =
-            lang === "km" && km?.title ? km.title : entry.title;
-          const displayDescription =
-            lang === "km" && km?.description
-              ? km.description
-              : entry.description;
-          const imageOnRight = index !== 1;
+      {loading ? (
+        <p style={styles.statusText}>Loading entries…</p>
+      ) : featuredEntries.length === 0 ? (
+        <p style={styles.statusText}>{t.no_results}</p>
+      ) : (
+        <div style={styles.featuresSection}>
+          {featuredEntries.map((entry, index) => {
+            const km = translations.km[entry.slug];
+            const displayTitle =
+              lang === "km" && km?.title ? km.title : entry.title;
+            const displayDescription =
+              lang === "km" && km?.description
+                ? km.description
+                : entry.description;
+            const imageOnRight = index !== 1;
 
-          return (
-            <FeatureRow
-              key={entry.id}
-              entryId={entry.id}
-              entryImage={entry.image}
-              imageOnRight={imageOnRight}
-              displayTitle={displayTitle}
-              displayDescription={displayDescription}
-            />
-          );
-        })}
-      </div>
+            return (
+              <FeatureRow
+                key={entry.id}
+                entryId={entry.id}
+                entryImage={entry.image}
+                imageOnRight={imageOnRight}
+                displayTitle={displayTitle}
+                displayDescription={displayDescription}
+              />
+            );
+          })}
+        </div>
+      )}
 
       <div
         ref={ctaRef}

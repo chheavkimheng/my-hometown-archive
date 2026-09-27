@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import entries from "../../data/entries.js";
 import translations from "../../data/translations.js";
 import EntryCard from "../../components/EntryCard.js";
+import { createClient } from "../../utils/supabase/client.js";
 import { useLanguage } from "../../context/LanguageContext.js";
 import { useScrollReveal } from "../../hooks/useScrollReveal.js";
 
@@ -82,10 +82,34 @@ export default function EntriesPage() {
   const t = translations[lang]?.ui ?? translations.en.ui;
   const [gridRef, gridVisible] = useScrollReveal();
 
-  // Matches either language, regardless of which one is displayed.
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    async function loadEntries() {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from("entries")
+        .select("id, slug, title, description, contributor, place, image:photo_url")
+        .order("created_at", { ascending: false });
+
+      if (!active) return;
+      if (error) {
+        console.error("Failed to load entries:", error);
+      }
+      setEntries(data ?? []);
+      setLoading(false);
+    }
+    loadEntries();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filteredEntries = entries.filter((entry) => {
     const q = query.trim().toLowerCase();
-    const km = translations.km[entry.id];
+    const km = translations.km[entry.slug];
     return (
       entry.title.toLowerCase().includes(q) ||
       entry.description.toLowerCase().includes(q) ||
@@ -117,7 +141,11 @@ export default function EntriesPage() {
         )}
       </div>
 
-      {filteredEntries.length === 0 ? (
+      {loading ? (
+        <div style={styles.emptyState}>
+          <p>Loading entries…</p>
+        </div>
+      ) : filteredEntries.length === 0 ? (
         <div style={styles.emptyState}>
           <p>{t.no_results}</p>
         </div>
@@ -130,7 +158,7 @@ export default function EntriesPage() {
           style={styles.gridWrap}
         >
           {filteredEntries.map((entry) => {
-            const km = translations.km[entry.id];
+            const km = translations.km[entry.slug];
             const displayTitle =
               lang === "km" && km?.title ? km.title : entry.title;
             const displayDescription =

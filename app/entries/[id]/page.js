@@ -1,17 +1,23 @@
 import { notFound } from "next/navigation";
-import entries from "../../../data/entries.js";
 import translations from "../../../data/translations.js";
 import EntryDetail from "../../../components/EntryDetail.js";
+import { createClient } from "../../../utils/supabase/server.js";
 
 export default async function EntryPage({ params }) {
   const { id } = await params;
-  const entry = entries.find((e) => e.id === id);
+  const supabase = await createClient();
 
-  if (!entry) {
+  const { data: entry, error } = await supabase
+    .from("entries")
+    .select("id, slug, title, description, contributor, place, image:photo_url")
+    .eq("id", id)
+    .single();
+
+  if (error || !entry) {
     notFound();
   }
 
-  const translation = translations.km[id] || null;
+  const translation = translations.km[entry.slug] || null;
 
   return <EntryDetail entry={entry} translation={translation} />;
 }

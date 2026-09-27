@@ -1,19 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 // Reveals an element once it scrolls into view, and keeps it revealed.
-// Visibility lives in React state (not a class added directly to the
-// DOM node), so it survives re-renders — typing in a search box,
-// toggling language, anything — instead of getting reset back to
-// invisible the next time the component renders.
+// Uses a callback ref (not useRef + useEffect) so the observer attaches
+// the moment the element actually mounts — including when that element
+// only appears after data finishes loading (e.g. entries fetched from
+// Supabase). A plain useRef + effect only checks for the element once,
+// on the hook's own first render; if the element isn't there yet at
+// that moment, it's never observed, and the fade-in never fires.
 export function useScrollReveal() {
-  const ref = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const observerRef = useRef(null);
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || isVisible) return;
+  const ref = useCallback((el) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+    if (!el) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -25,8 +30,8 @@ export function useScrollReveal() {
       { threshold: 0.1 }
     );
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [isVisible]);
+    observerRef.current = observer;
+  }, []);
 
   return [ref, isVisible];
 }
