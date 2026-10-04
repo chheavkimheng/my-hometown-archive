@@ -1,8 +1,8 @@
 // utils/validateEntry.js
 //
 // Field rules for a contribution, agreed on in Lab 7 Step 3. Shared by
-// the contribute form now, and whatever edit form reuses it in Part 2,
-// so the rules only ever live in one place.
+// the contribute form and the edit form, so the rules only ever live
+// in one place.
 
 const LIMITS = {
   title: 100,
@@ -19,13 +19,14 @@ const ALLOWED_PHOTO_TYPES = {
 
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5 MB, matches the Storage bucket limit
 
-// Derived from the file's actual MIME type, never from the filename the
-// browser reports — a user-supplied filename isn't trustworthy input.
 export function extensionForPhotoType(type) {
   return ALLOWED_PHOTO_TYPES[type] ?? null;
 }
 
-export function validateEntry({ title, description, contributor, place, photoFile }) {
+// photoRequired: true when creating (always need a photo), or when
+// editing an entry that doesn't already have one. False when editing
+// an entry that already has a photo and the user didn't pick a new one.
+export function validateEntry({ title, description, contributor, place, photoFile, photoRequired = true }) {
   const errors = {};
 
   if (!title.trim()) {
@@ -50,12 +51,14 @@ export function validateEntry({ title, description, contributor, place, photoFil
     errors.place = `Keep it under ${LIMITS.place} characters.`;
   }
 
-  if (!photoFile) {
+  if (photoRequired && !photoFile) {
     errors.photo = "A photo is required.";
-  } else if (!extensionForPhotoType(photoFile.type)) {
-    errors.photo = "Photo must be a JPEG, PNG, or WebP image.";
-  } else if (photoFile.size > MAX_PHOTO_BYTES) {
-    errors.photo = "Photo must be under 5 MB.";
+  } else if (photoFile) {
+    if (!extensionForPhotoType(photoFile.type)) {
+      errors.photo = "Photo must be a JPEG, PNG, or WebP image.";
+    } else if (photoFile.size > MAX_PHOTO_BYTES) {
+      errors.photo = "Photo must be under 5 MB.";
+    }
   }
 
   return errors;

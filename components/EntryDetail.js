@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
+import EntryOwnerActions from "./EntryOwnerActions.js";
 
 const styles = {
   backButton: {
@@ -77,7 +79,7 @@ function BackArrowIcon() {
   );
 }
 
-export default function EntryDetail({ entry, translation }) {
+export default function EntryDetail({ entry, translation, isOwner }) {
   const { lang } = useLanguage();
   const router = useRouter();
   const t = translations[lang]?.ui ?? translations.en.ui;
@@ -124,6 +126,7 @@ export default function EntryDetail({ entry, translation }) {
           <p style={styles.metaValue}>{displayPlace}</p>
         </div>
       </div>
+      {isOwner && <EntryOwnerActions entryId={entry.id} photoUrl={entry.image} />}
     </main>
   );
 }

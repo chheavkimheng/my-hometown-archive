@@ -25,6 +25,7 @@ const styles = {
     minHeight: 120,
     resize: "vertical",
   },
+  currentPhoto: { width: 160, borderRadius: 8, marginBottom: 8, display: "block" },
   error: { fontSize: 13, color: "#B3261E", margin: 0 },
   generalError: {
     padding: "12px 16px",
@@ -47,11 +48,12 @@ const styles = {
   submitDisabled: { opacity: 0.6, cursor: "not-allowed" },
 };
 
-export default function EntryForm() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [contributor, setContributor] = useState("");
-  const [place, setPlace] = useState("");
+export default function EntryForm({ entry }) {
+  const isEdit = Boolean(entry);
+  const [title, setTitle] = useState(entry?.title ?? "");
+  const [description, setDescription] = useState(entry?.description ?? "");
+  const [contributor, setContributor] = useState(entry?.contributor ?? "");
+  const [place, setPlace] = useState(entry?.place ?? "");
   const [photoFile, setPhotoFile] = useState(null);
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
@@ -69,7 +71,8 @@ export default function EntryForm() {
       place: place.trim(),
     };
 
-    const fieldErrors = validateEntry({ ...trimmed, photoFile });
+    const photoRequired = !isEdit || !entry?.image;
+    const fieldErrors = validateEntry({ ...trimmed, photoFile, photoRequired });
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
       return;
@@ -86,45 +89,68 @@ export default function EntryForm() {
       }
       const userId = userData.user.id;
 
-      // Random filename, never the one the browser reports — prevents
-      // path traversal and silently overwriting someone else's file.
-      const ext = extensionForPhotoType(photoFile.type);
-      const path = `${userId}/${crypto.randomUUID()}.${ext}`;
+      let photoUrl = entry?.image ?? null;
 
-      const { error: uploadError } = await supabase.storage
-        .from("photos")
-        .upload(path, photoFile, { contentType: photoFile.type });
+      if (photoFile) {
+        const ext = extensionForPhotoType(photoFile.type);
+        const path = `${userId}/${crypto.randomUUID()}.${ext}`;
 
-      if (uploadError) {
-        console.error("Photo upload failed:", uploadError);
-        setGeneralError("We couldn't upload that photo. Please try again.");
-        setSubmitting(false);
-        return;
+        const { error: uploadError } = await supabase.storage
+          .from("photos")
+          .upload(path, photoFile, { contentType: photoFile.type });
+
+        if (uploadError) {
+          console.error("Photo upload failed:", uploadError);
+          setGeneralError("We couldn't upload that photo. Please try again.");
+          setSubmitting(false);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage.from("photos").getPublicUrl(path);
+        photoUrl = urlData.publicUrl;
       }
 
-      const { data: urlData } = supabase.storage.from("photos").getPublicUrl(path);
+      const payload = {
+        title: trimmed.title,
+        description: trimmed.description,
+        contributor: trimmed.contributor,
+        place: trimmed.place || null,
+        photo_url: photoUrl,
+      };
 
-      const { data: inserted, error: insertError } = await supabase
-        .from("entries")
-        .insert({
-          title: trimmed.title,
-          description: trimmed.description,
-          contributor: trimmed.contributor,
-          place: trimmed.place || null,
-          photo_url: urlData.publicUrl,
-          owner: userId, // from the session, never from the form
-        })
-        .select()
-        .single();
+      let savedId;
 
-      if (insertError || !inserted) {
-        console.error("Entry save failed:", insertError);
-        setGeneralError("We couldn't save your entry. Please try again.");
-        setSubmitting(false);
-        return;
+      if (isEdit) {
+        const { data: updated, error: updateError } = await supabase
+          .from("entries")
+          .update(payload)
+          .eq("id", entry.id)
+          .select();
+
+        if (updateError || !updated || updated.length === 0) {
+          console.error("Update failed:", updateError);
+          setGeneralError("That change wasn't saved.");
+          setSubmitting(false);
+          return;
+        }
+        savedId = updated[0].id;
+      } else {
+        const { data: inserted, error: insertError } = await supabase
+          .from("entries")
+          .insert({ ...payload, owner: userId }) // owner from the session, never from the form
+          .select()
+          .single();
+
+        if (insertError || !inserted) {
+          console.error("Entry save failed:", insertError);
+          setGeneralError("We couldn't save your entry. Please try again.");
+          setSubmitting(false);
+          return;
+        }
+        savedId = inserted.id;
       }
 
-      router.push(`/entries/${inserted.id}`);
+      router.push(`/entries/${savedId}`);
     } catch (err) {
       console.error("Unexpected error saving entry:", err);
       setGeneralError("Something went wrong. Please try again.");
@@ -188,7 +214,12 @@ export default function EntryForm() {
       </div>
 
       <div style={styles.field}>
-        <label style={styles.label} htmlFor="photo">Photo</label>
+        <label style={styles.label} htmlFor="photo">
+          Photo{isEdit ? " (optional — leave blank to keep the current one)" : ""}
+        </label>
+        {isEdit && entry?.image && (
+          <img src={entry.image} alt="Current" style={styles.currentPhoto} />
+        )}
         <input
           id="photo"
           type="file"
@@ -203,7 +234,7 @@ export default function EntryForm() {
         disabled={submitting}
         style={{ ...styles.submit, ...(submitting ? styles.submitDisabled : {}) }}
       >
-        {submitting ? "Saving…" : "Save entry"}
+        {submitting ? "Saving…" : isEdit ? "Save changes" : "Save entry"}
       </button>
     </form>
   );
