@@ -140,9 +140,14 @@ export default function Header() {
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        setUser(data.user);
+      })
+      .catch(() => {
+        setUser(null);
+      });
 
     const {
       data: { subscription },
@@ -173,6 +178,11 @@ export default function Header() {
         <Link href="/entries" className="nav-link" style={styles.navLink}>
           {t.nav_entries}
         </Link>
+        {user && (
+          <Link href="/contribute" className="nav-link" style={styles.navLink}>
+            {t.nav_contribute ?? "Add entry"}
+          </Link>
+        )}
       </nav>
 
       <div style={styles.rightGroup}>
