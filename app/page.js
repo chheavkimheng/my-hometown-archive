@@ -149,6 +149,7 @@ export default function Home() {
       const { data, error } = await supabase
         .from("entries")
         .select("id, slug, title, description, image:photo_url")
+        .eq("status", "published")
         .order("created_at", { ascending: false });
 
       if (!active) return;

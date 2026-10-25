@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client.js";
 import { validateEntry, extensionForPhotoType } from "../utils/validateEntry.js";
+import SubmissionNotice from "./SubmissionNotice.js";
 
 const styles = {
   form: { display: "flex", flexDirection: "column", gap: 20, maxWidth: 560 },
@@ -58,6 +59,7 @@ export default function EntryForm({ entry }) {
   const [errors, setErrors] = useState({});
   const [generalError, setGeneralError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e) {
@@ -121,9 +123,14 @@ export default function EntryForm({ entry }) {
       let savedId;
 
       if (isEdit) {
+        // Only a reviewer's edit may keep its status; everyone else's goes back to review.
+        const { data: isReviewer } = await supabase.rpc("is_reviewer");
+        const updatePayload =
+          isReviewer === true ? payload : { ...payload, status: "pending" };
+
         const { data: updated, error: updateError } = await supabase
           .from("entries")
-          .update(payload)
+          .update(updatePayload)
           .eq("id", entry.id)
           .select();
 
@@ -147,7 +154,8 @@ export default function EntryForm({ entry }) {
           setSubmitting(false);
           return;
         }
-        savedId = inserted.id;
+        setSubmitted(true);
+        return;
       }
 
       router.push(`/entries/${savedId}`);
@@ -156,6 +164,10 @@ export default function EntryForm({ entry }) {
       setGeneralError("Something went wrong. Please try again.");
       setSubmitting(false);
     }
+  }
+
+  if (submitted) {
+    return <SubmissionNotice />;
   }
 
   return (

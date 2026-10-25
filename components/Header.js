@@ -179,9 +179,14 @@ export default function Header() {
           {t.nav_entries}
         </Link>
         {user && (
-          <Link href="/contribute" className="nav-link" style={styles.navLink}>
-            {t.nav_contribute ?? "Add entry"}
-          </Link>
+          <>
+            <Link href="/contribute" className="nav-link" style={styles.navLink}>
+              {t.nav_contribute ?? "Add entry"}
+            </Link>
+            <Link href="/my-entries" className="nav-link" style={styles.navLink}>
+              {t.nav_my_entries}
+            </Link>
+          </>
         )}
       </nav>
 

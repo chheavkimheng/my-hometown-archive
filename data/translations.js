@@ -43,6 +43,12 @@ const translations = {
       nav_login: "Log in",
       nav_signup: "Sign up",
       nav_logout: "Log out",
+      nav_my_entries: "My Entries",
+      status_pending: "Waiting for review",
+      status_published: "Live in the archive",
+      status_returned: "Returned for changes",
+      submit_waiting_message:
+        "Thank you, your entry has been received! It's now waiting for review, so it won't appear in the archive just yet. Once a reviewer approves it, it will be published for everyone to read, and you can check its status any time on My Entries.",
       footer_credit:
         "Built in ICT 340 — Vibe Coding, American University of Phnom Penh, Fall 2026. This archive is under construction all semester. Come back in December.",
       landing_intro: [
@@ -137,6 +143,12 @@ const translations = {
       nav_login: "ចូលគណនី",
       nav_signup: "ចុះឈ្មោះ",
       nav_logout: "ចាកចេញ",
+      nav_my_entries: "ធាតុរបស់ខ្ញុំ",
+      status_pending: "កំពុងរង់ចាំការពិនិត្យ",
+      status_published: "បានផ្សព្វផ្សាយ",
+      status_returned: "បានបញ្ជូនត្រឡប់វិញដើម្បីកែប្រែ",
+      submit_waiting_message:
+        "សូមអរគុណ! យើងបានទទួលធាតុរបស់អ្នកហើយ។ ឥឡូវនេះវាកំពុងរង់ចាំការពិនិត្យ ដូច្នេះវានឹងមិនទាន់បង្ហាញក្នុងបណ្ណសារនៅឡើយទេ។ នៅពេលដែលអ្នកពិនិត្យយល់ព្រម វានឹងត្រូវបានផ្សព្វផ្សាយឲ្យគ្រប់គ្នាអាន ហើយអ្នកអាចពិនិត្យស្ថានភាពរបស់វាបានគ្រប់ពេលនៅក្នុង «ធាតុរបស់ខ្ញុំ»។",
       archive_name: "សូរស័ព្ទឆ្នាំថ្មីខ្មែរ",
       curator_name: "ឈាវ គឹមហេង",
       archive_description:
