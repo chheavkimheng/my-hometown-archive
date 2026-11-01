@@ -136,6 +136,8 @@ export default function Header() {
   const siteName = lang === "km" ? t.archive_name : collection.name;
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [isReviewer, setIsReviewer] = useState(false);
+  const userId = user?.id;
 
   useEffect(() => {
     const supabase = createClient();
@@ -157,6 +159,25 @@ export default function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      setIsReviewer(false);
+      return;
+    }
+    let active = true;
+
+    async function checkReviewer() {
+      const supabase = createClient();
+      const { data } = await supabase.rpc("is_reviewer");
+      if (active) setIsReviewer(data === true);
+    }
+
+    checkReviewer();
+    return () => {
+      active = false;
+    };
+  }, [userId]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -186,6 +207,11 @@ export default function Header() {
             <Link href="/my-entries" className="nav-link" style={styles.navLink}>
               {t.nav_my_entries}
             </Link>
+            {isReviewer && (
+              <Link href="/review" className="nav-link" style={styles.navLink}>
+                {t.nav_review}
+              </Link>
+            )}
           </>
         )}
       </nav>
