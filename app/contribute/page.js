@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import EntryForm from "../../components/EntryForm.js";
 import { createClient } from "../../utils/supabase/client.js";
+import translations from "../../data/translations.js";
+import { useLanguage } from "../../context/LanguageContext.js";
 
 const styles = {
   title: {
@@ -16,6 +18,8 @@ const styles = {
 };
 
 export default function ContributePage() {
+  const { lang } = useLanguage();
+  const t = translations[lang]?.ui ?? translations.en.ui;
   const [user, setUser] = useState(null);
   const [checked, setChecked] = useState(false);
 
@@ -43,9 +47,9 @@ export default function ContributePage() {
   if (!user) {
     return (
       <main className="page-container">
-        <h1 style={styles.title}>Add an entry</h1>
+        <h1 style={styles.title}>{t.contribute_title}</h1>
         <p>
-          You need to be logged in to contribute. <Link href="/login">Log in</Link> to continue.
+          {t.contribute_login_prompt} <Link href="/login">{t.nav_login}</Link>
         </p>
       </main>
     );
@@ -53,7 +57,7 @@ export default function ContributePage() {
 
   return (
     <main className="page-container">
-      <h1 style={styles.title}>Add an entry</h1>
+      <h1 style={styles.title}>{t.contribute_title}</h1>
       <EntryForm />
     </main>
   );

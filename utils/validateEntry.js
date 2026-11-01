@@ -29,35 +29,36 @@ export function extensionForPhotoType(type) {
 export function validateEntry({ title, description, contributor, place, photoFile, photoRequired = true }) {
   const errors = {};
 
+  // Each error is a key into data/translations.js, plus the number it needs, so the form can show it in either language.
   if (!title.trim()) {
-    errors.title = "Title is required.";
+    errors.title = { key: "error_title_required" };
   } else if (title.trim().length > LIMITS.title) {
-    errors.title = `Keep it under ${LIMITS.title} characters.`;
+    errors.title = { key: "error_too_long", max: LIMITS.title };
   }
 
   if (!description.trim()) {
-    errors.description = "Description is required.";
+    errors.description = { key: "error_description_required" };
   } else if (description.trim().length > LIMITS.description) {
-    errors.description = `Keep it under ${LIMITS.description} characters.`;
+    errors.description = { key: "error_too_long", max: LIMITS.description };
   }
 
   if (!contributor.trim()) {
-    errors.contributor = "Contributor is required.";
+    errors.contributor = { key: "error_contributor_required" };
   } else if (contributor.trim().length > LIMITS.contributor) {
-    errors.contributor = `Keep it under ${LIMITS.contributor} characters.`;
+    errors.contributor = { key: "error_too_long", max: LIMITS.contributor };
   }
 
   if (place.trim().length > LIMITS.place) {
-    errors.place = `Keep it under ${LIMITS.place} characters.`;
+    errors.place = { key: "error_too_long", max: LIMITS.place };
   }
 
   if (photoRequired && !photoFile) {
-    errors.photo = "A photo is required.";
+    errors.photo = { key: "error_photo_required" };
   } else if (photoFile) {
     if (!extensionForPhotoType(photoFile.type)) {
-      errors.photo = "Photo must be a JPEG, PNG, or WebP image.";
+      errors.photo = { key: "error_photo_type" };
     } else if (photoFile.size > MAX_PHOTO_BYTES) {
-      errors.photo = "Photo must be under 5 MB.";
+      errors.photo = { key: "error_photo_size" };
     }
   }
 

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client.js";
 import { validateEntry, extensionForPhotoType } from "../utils/validateEntry.js";
 import SubmissionNotice from "./SubmissionNotice.js";
+import translations from "../data/translations.js";
+import { useLanguage } from "../context/LanguageContext.js";
 
 const styles = {
   form: { display: "flex", flexDirection: "column", gap: 20, maxWidth: 560 },
@@ -61,6 +63,9 @@ export default function EntryForm({ entry }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const router = useRouter();
+  const { lang } = useLanguage();
+  const t = translations[lang]?.ui ?? translations.en.ui;
+  const msg = (error) => t[error.key].replace("{max}", error.max ?? "");
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -103,7 +108,7 @@ export default function EntryForm({ entry }) {
 
         if (uploadError) {
           console.error("Photo upload failed:", uploadError);
-          setGeneralError("We couldn't upload that photo. Please try again.");
+          setGeneralError("form_error_upload");
           setSubmitting(false);
           return;
         }
@@ -136,7 +141,7 @@ export default function EntryForm({ entry }) {
 
         if (updateError || !updated || updated.length === 0) {
           console.error("Update failed:", updateError);
-          setGeneralError("That change wasn't saved.");
+          setGeneralError("form_error_not_saved");
           setSubmitting(false);
           return;
         }
@@ -150,7 +155,7 @@ export default function EntryForm({ entry }) {
 
         if (insertError || !inserted) {
           console.error("Entry save failed:", insertError);
-          setGeneralError("We couldn't save your entry. Please try again.");
+          setGeneralError("form_error_save");
           setSubmitting(false);
           return;
         }
@@ -161,7 +166,7 @@ export default function EntryForm({ entry }) {
       router.push(`/entries/${savedId}`);
     } catch (err) {
       console.error("Unexpected error saving entry:", err);
-      setGeneralError("Something went wrong. Please try again.");
+      setGeneralError("form_error_generic");
       setSubmitting(false);
     }
   }
@@ -172,10 +177,10 @@ export default function EntryForm({ entry }) {
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      {generalError && <p style={styles.generalError}>{generalError}</p>}
+      {generalError && <p style={styles.generalError}>{t[generalError]}</p>}
 
       <div style={styles.field}>
-        <label style={styles.label} htmlFor="title">Title</label>
+        <label style={styles.label} htmlFor="title">{t.form_title}</label>
         <input
           id="title"
           type="text"
@@ -184,11 +189,11 @@ export default function EntryForm({ entry }) {
           style={styles.input}
           className="auth-input"
         />
-        {errors.title && <p style={styles.error}>{errors.title}</p>}
+        {errors.title && <p style={styles.error}>{msg(errors.title)}</p>}
       </div>
 
       <div style={styles.field}>
-        <label style={styles.label} htmlFor="description">Description</label>
+        <label style={styles.label} htmlFor="description">{t.form_description}</label>
         <textarea
           id="description"
           value={description}
@@ -196,11 +201,11 @@ export default function EntryForm({ entry }) {
           style={styles.textarea}
           className="auth-input"
         />
-        {errors.description && <p style={styles.error}>{errors.description}</p>}
+        {errors.description && <p style={styles.error}>{msg(errors.description)}</p>}
       </div>
 
       <div style={styles.field}>
-        <label style={styles.label} htmlFor="contributor">Contributor</label>
+        <label style={styles.label} htmlFor="contributor">{t.contributor_label}</label>
         <input
           id="contributor"
           type="text"
@@ -209,11 +214,11 @@ export default function EntryForm({ entry }) {
           style={styles.input}
           className="auth-input"
         />
-        {errors.contributor && <p style={styles.error}>{errors.contributor}</p>}
+        {errors.contributor && <p style={styles.error}>{msg(errors.contributor)}</p>}
       </div>
 
       <div style={styles.field}>
-        <label style={styles.label} htmlFor="place">Place (optional)</label>
+        <label style={styles.label} htmlFor="place">{t.form_place}</label>
         <input
           id="place"
           type="text"
@@ -222,15 +227,15 @@ export default function EntryForm({ entry }) {
           style={styles.input}
           className="auth-input"
         />
-        {errors.place && <p style={styles.error}>{errors.place}</p>}
+        {errors.place && <p style={styles.error}>{msg(errors.place)}</p>}
       </div>
 
       <div style={styles.field}>
         <label style={styles.label} htmlFor="photo">
-          Photo{isEdit ? " (optional — leave blank to keep the current one)" : ""}
+          {t.form_photo}{isEdit ? ` ${t.form_photo_edit_hint}` : ""}
         </label>
         {isEdit && entry?.image && (
-          <img src={entry.image} alt="Current" style={styles.currentPhoto} />
+          <img src={entry.image} alt={t.form_photo_current} style={styles.currentPhoto} />
         )}
         <input
           id="photo"
@@ -238,7 +243,7 @@ export default function EntryForm({ entry }) {
           accept="image/jpeg,image/png,image/webp"
           onChange={(e) => setPhotoFile(e.target.files?.[0] ?? null)}
         />
-        {errors.photo && <p style={styles.error}>{errors.photo}</p>}
+        {errors.photo && <p style={styles.error}>{msg(errors.photo)}</p>}
       </div>
 
       <button
@@ -246,7 +251,7 @@ export default function EntryForm({ entry }) {
         disabled={submitting}
         style={{ ...styles.submit, ...(submitting ? styles.submitDisabled : {}) }}
       >
-        {submitting ? "Saving…" : isEdit ? "Save changes" : "Save entry"}
+        {submitting ? t.form_saving : isEdit ? t.form_save_changes : t.form_save_entry}
       </button>
     </form>
   );
