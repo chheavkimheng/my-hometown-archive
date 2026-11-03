@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import collection from "../collection.config.js";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { createClient } from "../utils/supabase/client.js";
+import NavMenu from "./NavMenu.js";
 
 const styles = {
   header: {
     display: "grid",
-    gridTemplateColumns: "1fr auto 1fr",
+    gridTemplateColumns: "1fr auto",
     alignItems: "center",
     gap: 16,
-    padding: "20px 32px",
+    padding: "16px 24px",
     backgroundColor: "#2D5F4C",
     color: "#FFFFFF",
     position: "sticky",
@@ -28,51 +29,40 @@ const styles = {
     textDecoration: "none",
     justifySelf: "start",
   },
-  nav: {
-    display: "flex",
-    gap: 32,
-    justifySelf: "center",
-  },
-  navLink: {
-    fontSize: 15,
-    color: "#FFFFFF",
-    textDecoration: "none",
-  },
   rightGroup: {
     display: "flex",
     alignItems: "center",
-    gap: 16,
+    gap: 12,
     justifySelf: "end",
   },
-  userEmail: {
-    fontSize: 14,
-    color: "#FFFFFF",
-    opacity: 0.9,
-    maxWidth: 160,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  authButton: {
-    padding: "6px 14px",
-    fontSize: 14,
-    fontWeight: 600,
-    color: "#2D5F4C",
-    backgroundColor: "#FFFFFF",
-    border: "none",
-    borderRadius: 8,
-    cursor: "pointer",
-  },
-  langButton: {
+  iconButton: {
     display: "flex",
     alignItems: "center",
     padding: "6px 10px",
+    color: "#FFFFFF",
     backgroundColor: "rgba(255, 255, 255, 0.15)",
     border: "1px solid rgba(255, 255, 255, 0.35)",
     borderRadius: 8,
     cursor: "pointer",
   },
 };
+
+function MenuIcon({ open }) {
+  return (
+    <svg
+      width="20"
+      height="16"
+      viewBox="0 0 20 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      style={{ display: "block" }}
+    >
+      {open ? <path d="M3 2l14 12M17 2L3 14" /> : <path d="M2 3h16M2 8h16M2 13h16" />}
+    </svg>
+  );
+}
 
 function USAFlagIcon() {
   return (
@@ -135,8 +125,10 @@ export default function Header() {
   const t = translations[lang]?.ui ?? translations.en.ui;
   const siteName = lang === "km" ? t.archive_name : collection.name;
   const router = useRouter();
+  const headerRef = useRef(null);
   const [user, setUser] = useState(null);
   const [isReviewer, setIsReviewer] = useState(false);
+  const [open, setOpen] = useState(false);
   const userId = user?.id;
 
   useEffect(() => {
@@ -179,71 +171,69 @@ export default function Header() {
     };
   }, [userId]);
 
+  // While the menu is open: Escape or a tap outside the header closes it.
+  useEffect(() => {
+    if (!open) return;
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    function onPointerDown(e) {
+      if (headerRef.current && !headerRef.current.contains(e.target)) setOpen(false);
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
+
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    setOpen(false);
     router.push("/");
     router.refresh();
   };
 
   return (
-    <header style={styles.header}>
+    <header ref={headerRef} style={styles.header}>
       <Link href="/" style={styles.siteName}>
         {siteName}
       </Link>
 
-      <nav style={styles.nav}>
-        <Link href="/" className="nav-link" style={styles.navLink}>
-          {t.nav_home}
-        </Link>
-        <Link href="/entries" className="nav-link" style={styles.navLink}>
-          {t.nav_entries}
-        </Link>
-        {user && (
-          <>
-            <Link href="/contribute" className="nav-link" style={styles.navLink}>
-              {t.nav_contribute ?? "Add entry"}
-            </Link>
-            <Link href="/my-entries" className="nav-link" style={styles.navLink}>
-              {t.nav_my_entries}
-            </Link>
-            {isReviewer && (
-              <Link href="/review" className="nav-link" style={styles.navLink}>
-                {t.nav_review}
-              </Link>
-            )}
-          </>
-        )}
-      </nav>
-
       <div style={styles.rightGroup}>
-        {user ? (
-          <>
-            <span style={styles.userEmail}>{user.email}</span>
-            <button type="button" onClick={handleLogout} style={styles.authButton}>
-              {t.nav_logout}
-            </button>
-          </>
-        ) : (
-          <>
-            <Link href="/login" className="nav-link" style={styles.navLink}>
-              {t.nav_login}
-            </Link>
-            <Link href="/signup" className="nav-link" style={styles.navLink}>
-              {t.nav_signup}
-            </Link>
-          </>
-        )}
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          aria-label={open ? t.menu_close : t.menu_open}
+          style={styles.iconButton}
+        >
+          <MenuIcon open={open} />
+        </button>
 
         <button
           type="button"
           onClick={toggleLang}
           aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
-          style={styles.langButton}
+          style={styles.iconButton}
         >
           {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
         </button>
       </div>
+
+      {open && (
+        <NavMenu
+          user={user}
+          isReviewer={isReviewer}
+          onClose={() => setOpen(false)}
+          onLogout={handleLogout}
+        />
+      )}
     </header>
   );
 }
