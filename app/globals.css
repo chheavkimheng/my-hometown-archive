@@ -2,13 +2,19 @@
   box-sizing: border-box;
 }
 
+/* Sticky footer: the page is a full-height column and the main content
+   grows to fill it, so short pages push the footer to the bottom. */
 body {
   margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Shared page container: content sits directly on the page background —
    no separate "card" — with a readable max-width instead. */
 .page-container {
+  flex: 1 0 auto;
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 56px 24px;
