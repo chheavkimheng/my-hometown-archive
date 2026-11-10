@@ -92,6 +92,7 @@ export default function EntriesPage() {
       const { data, error } = await supabase
         .from("entries")
         .select("id, slug, title, description, contributor, place, image:photo_url")
+        .eq("status", "published")
         .order("created_at", { ascending: false });
 
       if (!active) return;
