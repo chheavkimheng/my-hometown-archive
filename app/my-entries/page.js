@@ -15,8 +15,9 @@ const styles = {
     color: "#2D5F4C",
     margin: "0 0 24px",
   },
-  grid: { marginTop: 24 },
-  statusRow: { margin: "0 0 8px" },
+  grid: { marginTop: 24, rowGap: 32 },
+  item: { display: "grid", gridTemplateRows: "auto 1fr", gap: 8 },
+  statusRow: { margin: 0 },
   status: {
     display: "inline-block",
     padding: "4px 12px",
@@ -123,7 +124,7 @@ export default function MyEntriesPage() {
           const label = t[`status_${entry.status}`] ?? entry.status;
 
           return (
-            <div key={entry.id}>
+            <div key={entry.id} style={styles.item}>
               <p style={styles.statusRow}>
                 <span style={{ ...styles.status, ...statusColors[entry.status] }}>{label}</span>
               </p>
