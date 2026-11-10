@@ -12,7 +12,7 @@ import NavMenu from "./NavMenu.js";
 const styles = {
   header: {
     display: "grid",
-    gridTemplateColumns: "1fr auto",
+    gridTemplateColumns: "auto 1fr auto",
     alignItems: "center",
     gap: 16,
     padding: "16px 24px",
@@ -28,12 +28,6 @@ const styles = {
     color: "#FFFFFF",
     textDecoration: "none",
     justifySelf: "start",
-  },
-  rightGroup: {
-    display: "flex",
-    alignItems: "center",
-    gap: 12,
-    justifySelf: "end",
   },
   iconButton: {
     display: "flex",
@@ -125,7 +119,9 @@ export default function Header() {
   const t = translations[lang]?.ui ?? translations.en.ui;
   const siteName = lang === "km" ? t.archive_name : collection.name;
   const router = useRouter();
-  const headerRef = useRef(null);
+  const menuButtonRef = useRef(null);
+  const closeRef = useRef(null);
+  const wasOpen = useRef(false);
   const [user, setUser] = useState(null);
   const [isReviewer, setIsReviewer] = useState(false);
   const [open, setOpen] = useState(false);
@@ -171,23 +167,33 @@ export default function Header() {
     };
   }, [userId]);
 
-  // While the menu is open: Escape or a tap outside the header closes it.
+  // While the menu is open: Escape closes it and the page behind can't scroll.
   useEffect(() => {
     if (!open) return;
 
     function onKeyDown(e) {
       if (e.key === "Escape") setOpen(false);
     }
-    function onPointerDown(e) {
-      if (headerRef.current && !headerRef.current.contains(e.target)) setOpen(false);
-    }
-
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("pointerdown", onPointerDown);
+
     return () => {
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("pointerdown", onPointerDown);
     };
+  }, [open]);
+
+  // Keyboard users: focus moves into the menu when it opens,
+  // and back to the menu button when it closes.
+  useEffect(() => {
+    if (open) {
+      closeRef.current?.focus();
+      wasOpen.current = true;
+    } else if (wasOpen.current) {
+      menuButtonRef.current?.focus();
+      wasOpen.current = false;
+    }
   }, [open]);
 
   const handleLogout = async () => {
@@ -199,41 +205,45 @@ export default function Header() {
   };
 
   return (
-    <header ref={headerRef} style={styles.header}>
+    <header style={styles.header}>
+      <button
+        type="button"
+        ref={menuButtonRef}
+        onClick={() => setOpen(true)}
+        aria-expanded={open}
+        aria-controls="site-menu"
+        aria-label={t.menu_open}
+        style={styles.iconButton}
+      >
+        <MenuIcon />
+      </button>
+
       <Link href="/" style={styles.siteName}>
         {siteName}
       </Link>
 
-      <div style={styles.rightGroup}>
-        <button
-          type="button"
-          onClick={() => setOpen((current) => !current)}
-          aria-expanded={open}
-          aria-controls="site-menu"
-          aria-label={open ? t.menu_close : t.menu_open}
-          style={styles.iconButton}
-        >
-          <MenuIcon open={open} />
-        </button>
+      <button
+        type="button"
+        onClick={toggleLang}
+        aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
+        style={styles.iconButton}
+      >
+        {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
+      </button>
 
-        <button
-          type="button"
-          onClick={toggleLang}
-          aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
-          style={styles.iconButton}
-        >
-          {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
-        </button>
-      </div>
-
-      {open && (
-        <NavMenu
-          user={user}
-          isReviewer={isReviewer}
-          onClose={() => setOpen(false)}
-          onLogout={handleLogout}
-        />
-      )}
+      <div
+        className={`nav-overlay ${open ? "is-open" : ""}`}
+        onClick={() => setOpen(false)}
+        aria-hidden="true"
+      />
+      <NavMenu
+        open={open}
+        closeRef={closeRef}
+        user={user}
+        isReviewer={isReviewer}
+        onClose={() => setOpen(false)}
+        onLogout={handleLogout}
+      />
     </header>
   );
 }

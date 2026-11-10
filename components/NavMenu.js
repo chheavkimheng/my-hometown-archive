@@ -5,7 +5,22 @@ import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
 
 const styles = {
-  divider: { borderTop: "1px solid rgba(255, 255, 255, 0.2)", margin: "8px 0" },
+  head: { display: "flex", justifyContent: "flex-end", padding: "16px 24px 8px" },
+  closeButton: {
+    display: "flex",
+    alignItems: "center",
+    padding: "6px 10px",
+    color: "#FFFFFF",
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    border: "1px solid rgba(255, 255, 255, 0.35)",
+    borderRadius: 8,
+    cursor: "pointer",
+  },
+  account: {
+    marginTop: "auto",
+    padding: "12px 0",
+    borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+  },
   email: {
     padding: "8px 24px",
     fontSize: 14,
@@ -28,7 +43,24 @@ const styles = {
   },
 };
 
-export default function NavMenu({ user, isReviewer, onClose, onLogout }) {
+function CloseIcon() {
+  return (
+    <svg
+      width="20"
+      height="16"
+      viewBox="0 0 20 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      style={{ display: "block" }}
+    >
+      <path d="M4 2l12 12M16 2L4 14" />
+    </svg>
+  );
+}
+
+export default function NavMenu({ open, closeRef, user, isReviewer, onClose, onLogout }) {
   const { lang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
 
@@ -44,32 +76,44 @@ export default function NavMenu({ user, isReviewer, onClose, onLogout }) {
   }
 
   return (
-    <nav id="site-menu" className="nav-panel">
+    <nav id="site-menu" className={`nav-drawer ${open ? "is-open" : ""}`}>
+      <div style={styles.head}>
+        <button
+          type="button"
+          ref={closeRef}
+          onClick={onClose}
+          aria-label={t.menu_close}
+          style={styles.closeButton}
+        >
+          <CloseIcon />
+        </button>
+      </div>
+
       {links.map((link) => (
         <Link key={link.href} href={link.href} className="nav-panel-link" onClick={onClose}>
           {link.label}
         </Link>
       ))}
 
-      <div style={styles.divider} />
-
-      {user ? (
-        <>
-          <div style={styles.email}>{user.email}</div>
-          <button type="button" onClick={onLogout} style={styles.logout}>
-            {t.nav_logout}
-          </button>
-        </>
-      ) : (
-        <>
-          <Link href="/login" className="nav-panel-link" onClick={onClose}>
-            {t.nav_login}
-          </Link>
-          <Link href="/signup" className="nav-panel-link" onClick={onClose}>
-            {t.nav_signup}
-          </Link>
-        </>
-      )}
+      <div style={styles.account}>
+        {user ? (
+          <>
+            <div style={styles.email}>{user.email}</div>
+            <button type="button" onClick={onLogout} style={styles.logout}>
+              {t.nav_logout}
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login" className="nav-panel-link" onClick={onClose}>
+              {t.nav_login}
+            </Link>
+            <Link href="/signup" className="nav-panel-link" onClick={onClose}>
+              {t.nav_signup}
+            </Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
