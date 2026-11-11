@@ -55,6 +55,69 @@ const translations = {
         "It is for my family, and for anyone who wants to see how Khmer New Year is kept in one home. Contributors can add their own entries, and every entry a contributor adds waits for a reviewer before it appears.",
       ],
       about_story_heading: "The story behind it",
+      about_sections: [
+        {
+          heading: "The three days",
+          intro:
+            "Khmer New Year lasts three days, and each day has its own meaning. This is how my family keeps them.",
+          items: [
+            {
+              title: "Day 1 · Moha Songkran",
+              text: "As the New Year begins, my family sets an altar with fresh fruit, incense and candles to welcome the tevoda, a guardian spirit believed to watch over our home for the year ahead. We light incense together and make wishes for the new year.",
+            },
+            {
+              title: "Day 2 · Virak Wanabat",
+              text: "Families and pagoda-goers pile small mounds of sand into stupas that stand for Mount Meru, then decorate them with flowers, candles and flags. Each handful of sand is a small act of letting go of past misdeeds.",
+            },
+            {
+              title: "Day 3 · Virak Loeng Sak",
+              text: "On the final day, fragrant water is poured over Buddha statues and over elders to wash away the sorrow and bad luck of the old year and bring blessings for the next. Younger family members pour water over the hands of their grandparents as a sign of respect.",
+            },
+          ],
+        },
+        {
+          heading: "Games on the first night",
+          intro:
+            "On the first night, young people gather in the yard to play traditional games. Many of them use a krama, the checkered cotton scarf found in nearly every Khmer home.",
+          items: [
+            {
+              title: "Chol Chhoung",
+              text: "Two teams face each other and toss a knotted krama back and forth, singing and dancing as they throw and catch. If someone is hit by the krama, their whole team has to dance while the other team sings.",
+            },
+            {
+              title: "Leak Kanseng",
+              text: "Players sit in a circle while one player walks around the outside, singing and holding a twisted krama, then quietly drops it behind someone's back. If that player doesn't notice in time, they have to chase the dropper around the circle.",
+            },
+            {
+              title: "Bos Angkunh",
+              text: "On the first night, my cousins and I play this seed game in the yard, split into two teams.",
+            },
+          ],
+        },
+        {
+          heading: "Food of the festival",
+          intro: "Some dishes appear every year on my family's table.",
+          items: [
+            {
+              title: "Stir-fried glass noodles",
+              text: "Glass noodles stir-fried with fried tofu skin, wood ear mushrooms and carrots, cooked by my mother for the family's New Year table. Noodles are often served during the festival as a wish for a long life.",
+            },
+            {
+              title: "Kralan",
+              text: "Sticky rice mixed with beans and coconut milk, packed into bamboo tubes and grilled over a fire for about 90 minutes until it smells smoky and turns slightly golden. It is often sold along the roadside in the days before the New Year.",
+            },
+            {
+              title: "Nom Ansom Chek",
+              text: "A tube-shaped sticky rice cake with banana inside, wrapped in banana leaves and steamed until soft. It belongs to both Khmer New Year and Pchum Ben, and is often made in big batches so family members can take some home after a visit.",
+            },
+          ],
+        },
+        {
+          heading: "Add to the archive",
+          intro:
+            "Anyone with an account can add an entry about their own family or community, with a photo. Every new entry waits for a reviewer before it appears, so a person has read it before it is shared.",
+        },
+      ],
       nav_contribute: "Add entry",
       contribute_title: "Add an entry",
       contribute_login_prompt: "You need to be logged in to contribute.",
@@ -205,6 +268,69 @@ const translations = {
         "វាសម្រាប់គ្រួសាររបស់ខ្ញុំ និងសម្រាប់អ្នកណាដែលចង់ឃើញពីរបៀបដែលគេប្រារព្ធពិធីបុណ្យចូលឆ្នាំថ្មីខ្មែរនៅក្នុងផ្ទះមួយ។ អ្នករួមចំណែកអាចបន្ថែមធាតុរបស់ខ្លួនបាន ហើយធាតុនីមួយៗដែលអ្នករួមចំណែកបន្ថែម ត្រូវរង់ចាំអ្នកពិនិត្យមុននឹងបង្ហាញ។",
       ],
       about_story_heading: "រឿងរ៉ាវនៅពីក្រោយ",
+      about_sections: [
+        {
+          heading: "ថ្ងៃទាំងបី",
+          intro:
+            "ពិធីបុណ្យចូលឆ្នាំថ្មីខ្មែរមានរយៈពេលបីថ្ងៃ ហើយថ្ងៃនីមួយៗមានអត្ថន័យផ្ទាល់ខ្លួន។ នេះជារបៀបដែលគ្រួសាររបស់ខ្ញុំប្រារព្ធវា។",
+          items: [
+            {
+              title: "ថ្ងៃទី១ · មហាសង្ក្រាន្ត",
+              text: "នៅពេលចាប់ផ្តើមឆ្នាំថ្មី ក្រុមគ្រួសាររបស់ខ្ញុំរៀបចំតុបូជាមួយផ្លែឈើស្រស់ ធូប និងទៀន ដើម្បីទទួលទេវតា ដែលជាទេវតារក្សាដែលគេជឿថានឹងមកយាមមើលថែផ្ទះរបស់យើងអស់មួយឆ្នាំខាងមុខ។ យើងដុតធូបជាមួយគ្នា ហើយប្រាថ្នាសម្រាប់ឆ្នាំថ្មី។",
+            },
+            {
+              title: "ថ្ងៃទី២ · វារៈវ័នបត",
+              text: "ក្រុមគ្រួសារនិងពុទ្ធបរិស័ទនាំគ្នាកន្សួសខ្សាច់ជាគំនរតូចៗឲ្យទៅជារាងភ្នំ ដែលតំណាងឲ្យភ្នំព្រះសុមេរុ រួចតុបតែងវាដោយផ្កា ទៀន និងទង់ជាតិ។ គ្រាប់ខ្សាច់នីមួយៗត្រូវបានចាត់ទុកជាទង្វើតូចមួយនៃការជម្រុះកម្ម។",
+            },
+            {
+              title: "ថ្ងៃទី៣ · វារៈឡើងស័ក",
+              text: "នៅថ្ងៃចុងក្រោយ ទឹកអប់ត្រូវបានប្រើសម្រាប់ស្រង់ព្រះពុទ្ធរូប និងចាស់ទុំ ជាទង្វើមួយដែលគេជឿថាអាចលាងជម្រះទុក្ខព្រួយ ភាពសោកសៅ និងសំណាងអាក្រក់ពីឆ្នាំមុន ព្រមទាំងនាំមកនូវពរជ័យសម្រាប់ឆ្នាំខាងមុខ។ សមាជិកគ្រួសារជំនាន់ក្រោយច្រើនតែស្រោចទឹកលើដៃជីដូនជីតា ជាកាយវិការនៃការគោរព។",
+            },
+          ],
+        },
+        {
+          heading: "ល្បែងនៅយប់ដំបូង",
+          intro:
+            "នៅយប់ដំបូង យុវជនប្រមូលផ្តុំគ្នានៅទីធ្លា ដើម្បីលេងល្បែងប្រពៃណី ដែលច្រើនប្រើក្រមា ជាក្រណាត់កប្បាសឆ្នូតដែលមានស្ទើរតែគ្រប់ផ្ទះខ្មែរ។",
+          items: [
+            {
+              title: "ចោលឈូង",
+              text: "ក្រុមពីរងាកមុខចូលគ្នា ហើយបោះក្រមាចងជាកណ្តាប់ទៅវិញទៅមក ទាំងច្រៀង និងរាំក្នុងពេលបោះនិងទទួលក្រមា។ បើនរណាម្នាក់ត្រូវក្រមា ក្រុមទាំងមូលរបស់អ្នកនោះត្រូវរាំ ខណៈក្រុមម្ខាងទៀតច្រៀង។",
+            },
+            {
+              title: "លាក់កន្សែង",
+              text: "អ្នកលេងអង្គុយជារង្វង់ ហើយម្នាក់ដើរជុំវិញខាងក្រៅ ដៃកាន់ក្រមាចងជាកួច ទាំងច្រៀងទៅតាមផ្លូវ រួចលាក់ក្រមានោះដោយស្ងាត់ៗនៅពីក្រោយខ្នងនរណាម្នាក់។ ប្រសិនបើអ្នកនោះមិនដឹងខ្លួនទាន់ពេល គាត់ត្រូវរត់ដេញអ្នកលាក់ជុំវិញរង្វង់។",
+            },
+            {
+              title: "បោះអង្គញ់",
+              text: "នៅយប់ដំបូង ខ្ញុំ និងបងប្អូនជីដូនមួយលេងល្បែងគ្រាប់អង្គញ់នេះនៅទីធ្លា ដោយបែងចែកជាពីរក្រុម។",
+            },
+          ],
+        },
+        {
+          heading: "ម្ហូបអាហារនៃពិធីបុណ្យ",
+          intro: "មុខម្ហូបមួយចំនួនលេចឡើងរាល់ឆ្នាំនៅលើតុរបស់គ្រួសាររបស់ខ្ញុំ។",
+          items: [
+            {
+              title: "មីឆាថ្លា",
+              text: "មីឆាថ្លាជាមួយសំបកទឹកសណ្តែកបំពង ផ្សិតត្រចៀកឈើ និងការ៉ុត ដែលម្តាយខ្ញុំចម្អិនសម្រាប់តុបុណ្យចូលឆ្នាំថ្មីរបស់ក្រុមគ្រួសារ។ មីច្រើនតែត្រូវបានបម្រើក្នុងអំឡុងពេលបុណ្យនេះ ជានិមិត្តរូបនៃការប្រាថ្នាឲ្យមានអាយុវែង។",
+            },
+            {
+              title: "ក្រឡាន",
+              text: "ល្បាយអង្ករចំណីលាយជាមួយសណ្តែក និងទឹកដូង បំពេញចូលទៅក្នុងបំពង់ឫស្សី រួចដុតលើភ្លើងប្រមាណ៩០នាទី រហូតដល់មានក្លិនក្រអូបផ្សែង និងលឿងសង្ហែមបន្តិច។ វាច្រើនតែលក់តាមដងផ្លូវក្នុងថ្ងៃមុនចូលឆ្នាំថ្មី។",
+            },
+            {
+              title: "នំអន្សមចេក",
+              text: "នំអង្ករចំណីរាងបំពង់ មានចេកនៅខាងក្នុង រុំដោយស្លឹកចេក រួចចំហុយរហូតទន់។ វាជាបង្អែមដែលទាក់ទងនឹងទាំងបុណ្យចូលឆ្នាំថ្មី និងបុណ្យភ្ជុំបិណ្ឌ ហើយច្រើនតែធ្វើជាបាច់ៗច្រើន ដើម្បីឲ្យសមាជិកគ្រួសារយកទៅផ្ទះក្រោយពេលមកលេង។",
+            },
+          ],
+        },
+        {
+          heading: "បន្ថែមទៅក្នុងបណ្ណសារ",
+          intro:
+            "អ្នកណាដែលមានគណនីអាចបន្ថែមធាតុអំពីគ្រួសារ ឬសហគមន៍របស់ខ្លួនបាន ជាមួយរូបថត។ ធាតុថ្មីនីមួយៗត្រូវរង់ចាំអ្នកពិនិត្យមុននឹងបង្ហាញ ដូច្នេះមានមនុស្សម្នាក់បានអានវាមុននឹងចែករំលែក។",
+        },
+      ],
       nav_contribute: "បន្ថែមធាតុ",
       contribute_title: "បន្ថែមធាតុថ្មី",
       contribute_login_prompt: "អ្នកត្រូវចូលគណនីដើម្បីរួមចំណែក។",
