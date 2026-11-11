@@ -231,18 +231,19 @@ input:focus {
 
 .nav-panel-link {
   display: block;
-  margin: 0 20px 12px;
-  padding: 14px 18px;
+  padding: 16px 24px;
   color: #FFFFFF;
   font-size: 18px;
   text-decoration: none;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
   transition: background-color 0.2s ease;
 }
+/* Only the first link in the drawer gets a top line, so lines never double up. */
+.nav-drawer > .nav-panel-link:first-of-type {
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+}
 .nav-panel-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
 @media (prefers-reduced-motion: reduce) {

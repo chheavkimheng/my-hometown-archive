@@ -33,11 +33,11 @@ const styles = {
   },
   account: {
     marginTop: "auto",
-    padding: "16px 0 12px",
-    borderTop: "1px solid rgba(255, 255, 255, 0.2)",
+    padding: "0 0 12px",
+    borderTop: "1px solid rgba(255, 255, 255, 0.35)",
   },
   logout: {
-    margin: "0 20px 8px",
+    margin: "16px 20px 8px",
     padding: "10px 18px",
     fontSize: 16,
     fontWeight: 600,
