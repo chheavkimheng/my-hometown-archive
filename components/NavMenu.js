@@ -73,6 +73,7 @@ export default function NavMenu({ open, closeRef, user, isReviewer, onClose, onL
   const links = [
     { href: "/", label: t.nav_home },
     { href: "/entries", label: t.nav_entries },
+    { href: "/about", label: t.nav_about },
   ];
   if (user) {
     links.push({ href: "/contribute", label: t.nav_contribute ?? "Add entry" });
