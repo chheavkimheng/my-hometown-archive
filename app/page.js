@@ -20,9 +20,9 @@ function truncate(text, maxLength) {
 const styles = {
   hero: {
     position: "relative",
-    minHeight: 380,
+    minHeight: "clamp(440px, 70vh, 680px)",
     display: "flex",
-    alignItems: "flex-end",
+    alignItems: "center",
     flexShrink: 0,
     overflow: "hidden",
     backgroundColor: "#2D5F4C",
@@ -32,7 +32,7 @@ const styles = {
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2) 70%, rgba(0, 0, 0, 0.1))",
+      "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3) 80%)",
   },
   heroText: {
     position: "relative",
@@ -40,6 +40,7 @@ const styles = {
     maxWidth: 1100,
     margin: "0 auto",
     padding: "56px 24px",
+    textAlign: "center",
   },
   kicker: {
     fontFamily: "Georgia, 'Times New Roman', serif",
