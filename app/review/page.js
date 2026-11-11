@@ -2,6 +2,15 @@ import { createClient } from "../../utils/supabase/server.js";
 import ReviewQueue from "../../components/ReviewQueue.js";
 import ReviewNotice from "../../components/ReviewNotice.js";
 
+// A read-only count. Returns null if the query fails, so the page never shows a wrong number.
+async function countByStatus(supabase, status) {
+  const { count, error } = await supabase
+    .from("entries")
+    .select("id", { count: "exact", head: true })
+    .eq("status", status);
+  return error ? null : count;
+}
+
 export default async function ReviewPage() {
   const supabase = await createClient();
   const { data: isReviewer } = await supabase.rpc("is_reviewer");
@@ -21,5 +30,17 @@ export default async function ReviewPage() {
     console.error("Failed to load the review queue:", error);
   }
 
-  return <ReviewQueue initialEntries={entries ?? []} loadFailed={Boolean(error)} />;
+  const [published, returned] = await Promise.all([
+    countByStatus(supabase, "published"),
+    countByStatus(supabase, "returned"),
+  ]);
+  const counts = published === null || returned === null ? null : { published, returned };
+
+  return (
+    <ReviewQueue
+      initialEntries={entries ?? []}
+      loadFailed={Boolean(error)}
+      counts={counts}
+    />
+  );
 }

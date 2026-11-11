@@ -5,6 +5,8 @@ import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { createClient } from "../utils/supabase/client.js";
 import ReviewItem from "./ReviewItem.js";
+import ReviewStats from "./ReviewStats.js";
+import ReviewEmpty from "./ReviewEmpty.js";
 
 const styles = {
   title: {
@@ -17,12 +19,16 @@ const styles = {
   list: { display: "flex", flexDirection: "column", gap: 24 },
 };
 
-export default function ReviewQueue({ initialEntries, loadFailed }) {
+export default function ReviewQueue({ initialEntries, loadFailed, counts }) {
   const { lang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
   const [entries, setEntries] = useState(initialEntries);
   const [busyId, setBusyId] = useState(null);
   const [failedId, setFailedId] = useState(null);
+  const [reviewed, setReviewed] = useState({
+    published: counts?.published ?? 0,
+    returned: counts?.returned ?? 0,
+  });
 
   async function handleReview(entryId, decision) {
     setBusyId(entryId);
@@ -40,13 +46,14 @@ export default function ReviewQueue({ initialEntries, loadFailed }) {
       return;
     }
     setEntries((current) => current.filter((entry) => entry.id !== entryId));
+    setReviewed((current) => ({ ...current, [decision]: current[decision] + 1 }));
   }
 
   let content;
   if (loadFailed) {
     content = <p role="alert">{t.review_load_failed}</p>;
   } else if (entries.length === 0) {
-    content = <p>{t.review_empty}</p>;
+    content = <ReviewEmpty />;
   } else {
     content = (
       <div style={styles.list}>
@@ -66,6 +73,13 @@ export default function ReviewQueue({ initialEntries, loadFailed }) {
   return (
     <main className="page-container">
       <h1 style={styles.title}>{t.review_title}</h1>
+      {counts && !loadFailed && (
+        <ReviewStats
+          pending={entries.length}
+          published={reviewed.published}
+          returned={reviewed.returned}
+        />
+      )}
       {content}
     </main>
   );
