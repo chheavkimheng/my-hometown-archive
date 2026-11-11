@@ -12,7 +12,7 @@ import NavMenu from "./NavMenu.js";
 const styles = {
   header: {
     display: "grid",
-    gridTemplateColumns: "auto 1fr auto",
+    gridTemplateColumns: "1fr auto",
     alignItems: "center",
     gap: 16,
     padding: "16px 24px",
@@ -28,6 +28,12 @@ const styles = {
     color: "#FFFFFF",
     textDecoration: "none",
     justifySelf: "start",
+  },
+  rightGroup: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    justifySelf: "end",
   },
   iconButton: {
     display: "flex",
@@ -206,30 +212,32 @@ export default function Header() {
 
   return (
     <header style={styles.header}>
-      <button
-        type="button"
-        ref={menuButtonRef}
-        onClick={() => setOpen(true)}
-        aria-expanded={open}
-        aria-controls="site-menu"
-        aria-label={t.menu_open}
-        style={styles.iconButton}
-      >
-        <MenuIcon />
-      </button>
-
       <Link href="/" style={styles.siteName}>
         {siteName}
       </Link>
 
-      <button
-        type="button"
-        onClick={toggleLang}
-        aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
-        style={styles.iconButton}
-      >
-        {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
-      </button>
+      <div style={styles.rightGroup}>
+        <button
+          type="button"
+          onClick={toggleLang}
+          aria-label={lang === "en" ? "Switch to Khmer" : "Switch to English"}
+          style={styles.iconButton}
+        >
+          {lang === "en" ? <CambodiaFlagIcon /> : <USAFlagIcon />}
+        </button>
+
+        <button
+          type="button"
+          ref={menuButtonRef}
+          onClick={() => setOpen(true)}
+          aria-expanded={open}
+          aria-controls="site-menu"
+          aria-label={t.menu_open}
+          style={styles.iconButton}
+        >
+          <MenuIcon />
+        </button>
+      </div>
 
       <div
         className={`nav-overlay ${open ? "is-open" : ""}`}

@@ -211,15 +211,15 @@ input:focus {
   position: fixed;
   top: 0;
   bottom: 0;
-  left: 0;
+  right: 0;
   z-index: 2;
   width: min(320px, 85vw);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
   background-color: #2D5F4C;
-  box-shadow: 12px 0 32px rgba(0, 0, 0, 0.25);
-  transform: translateX(-100%);
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.25);
+  transform: translateX(100%);
   visibility: hidden;
   transition: transform 0.28s ease, visibility 0s linear 0.28s;
 }
