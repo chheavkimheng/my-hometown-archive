@@ -5,8 +5,23 @@ import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
 
 const styles = {
-  head: { display: "flex", justifyContent: "flex-end", padding: "16px 24px 8px" },
+  head: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: "16px 20px 20px",
+  },
+  email: {
+    flex: 1,
+    minWidth: 0,
+    fontSize: 18,
+    fontWeight: 600,
+    color: "#FFFFFF",
+    overflowWrap: "anywhere",
+  },
   closeButton: {
+    marginLeft: "auto",
+    flexShrink: 0,
     display: "flex",
     alignItems: "center",
     padding: "6px 10px",
@@ -18,22 +33,13 @@ const styles = {
   },
   account: {
     marginTop: "auto",
-    padding: "12px 0",
+    padding: "16px 0 12px",
     borderTop: "1px solid rgba(255, 255, 255, 0.2)",
   },
-  email: {
-    padding: "8px 24px",
-    fontSize: 14,
-    color: "#FFFFFF",
-    opacity: 0.9,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
   logout: {
-    margin: "4px 24px 12px",
-    padding: "8px 16px",
-    fontSize: 14,
+    margin: "0 20px 8px",
+    padding: "10px 18px",
+    fontSize: 16,
     fontWeight: 600,
     color: "#2D5F4C",
     backgroundColor: "#FFFFFF",
@@ -78,6 +84,7 @@ export default function NavMenu({ open, closeRef, user, isReviewer, onClose, onL
   return (
     <nav id="site-menu" className={`nav-drawer ${open ? "is-open" : ""}`}>
       <div style={styles.head}>
+        {user && <div style={styles.email}>{user.email}</div>}
         <button
           type="button"
           ref={closeRef}
@@ -97,12 +104,9 @@ export default function NavMenu({ open, closeRef, user, isReviewer, onClose, onL
 
       <div style={styles.account}>
         {user ? (
-          <>
-            <div style={styles.email}>{user.email}</div>
-            <button type="button" onClick={onLogout} style={styles.logout}>
-              {t.nav_logout}
-            </button>
-          </>
+          <button type="button" onClick={onLogout} style={styles.logout}>
+            {t.nav_logout}
+          </button>
         ) : (
           <>
             <Link href="/login" className="nav-panel-link" onClick={onClose}>
