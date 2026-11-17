@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import collection from "../collection.config.js";
 import translations from "../data/translations.js";
 import { createClient } from "../utils/supabase/client.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
+import HeroSlideshow from "../components/HeroSlideshow.js";
 
-// The photo behind the title. Change this one line to use another picture from public/.
-const HERO_IMAGE = "/images/entry3.jpg";
+// The photos behind the title, in the order they appear. Change a path to use another picture from public/.
+const HERO_IMAGES = [
+  "/images/hero-1.jpg",
+  "/images/hero-2.jpg",
+  "/images/hero-3.jpg",
+];
 
 function truncate(text, maxLength) {
   if (text.length <= maxLength) return text;
@@ -27,7 +31,6 @@ const styles = {
     overflow: "hidden",
     backgroundColor: "#2D5F4C",
   },
-  heroImage: { objectFit: "cover", objectPosition: "center" },
   heroShade: {
     position: "absolute",
     inset: 0,
@@ -196,14 +199,7 @@ export default function Home() {
   return (
     <>
       <section style={styles.hero}>
-        <Image
-          src={HERO_IMAGE}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          style={styles.heroImage}
-        />
+        <HeroSlideshow images={HERO_IMAGES} />
         <div style={styles.heroShade} />
         <div style={styles.heroText}>
           <p className="fade-in-up" style={styles.kicker}>
