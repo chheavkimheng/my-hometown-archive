@@ -43,7 +43,7 @@ const styles = {
     flexWrap: "wrap",
     alignItems: "flex-end",
     justifyContent: "space-between",
-    gap: "24px 32px",
+    gap: "16px 24px",
   },
   accent: {
     width: 48,
@@ -60,10 +60,9 @@ const styles = {
     margin: 0,
     lineHeight: 1.15,
   },
-  countRow: { minHeight: 34, marginTop: 14 },
   count: {
     display: "inline-block",
-    margin: 0,
+    margin: "0 0 6px",
     padding: "6px 14px",
     fontSize: 14,
     color: "#2D5F4C",
@@ -192,39 +191,37 @@ export default function EntriesPage() {
           <h1 className="fade-in-up" style={styles.title}>
             {t.nav_entries}
           </h1>
-          <div style={styles.countRow}>
-            {!loading && (
-              <p style={styles.count}>
-                {t.entries_count_prefix} <strong>{entries.length}</strong>{" "}
-                {t.entries_count_suffix}
-              </p>
-            )}
-          </div>
         </div>
+        {!loading && (
+          <p style={styles.count}>
+            {t.entries_count_prefix} <strong>{entries.length}</strong>{" "}
+            {t.entries_count_suffix}
+          </p>
+        )}
+      </div>
 
-        <div className="search-field">
-          <span className="search-icon">
-            <SearchIcon />
-          </span>
-          <input
-            type="text"
-            className="search-input"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t.search_placeholder}
-            aria-label={t.search_placeholder}
-          />
-          {query && (
-            <button
-              type="button"
-              className="search-clear"
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-            >
-              <ClearIcon />
-            </button>
-          )}
-        </div>
+      <div className="search-field">
+        <span className="search-icon">
+          <SearchIcon />
+        </span>
+        <input
+          type="text"
+          className="search-input"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t.search_placeholder}
+          aria-label={t.search_placeholder}
+        />
+        {query && (
+          <button
+            type="button"
+            className="search-clear"
+            onClick={() => setQuery("")}
+            aria-label="Clear search"
+          >
+            <ClearIcon />
+          </button>
+        )}
       </div>
 
       {entriesContent}
