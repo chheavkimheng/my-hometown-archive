@@ -8,30 +8,65 @@ import { createClient } from "../../utils/supabase/client.js";
 import { useLanguage } from "../../context/LanguageContext.js";
 import { useScrollReveal } from "../../hooks/useScrollReveal.js";
 
+function SearchIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </svg>
+  );
+}
+
 function ClearIcon() {
   return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 6L6 18M6 6l12 12" />
     </svg>
   );
 }
 
+// A gray placeholder shaped like a card, shown while entries load.
+function SkeletonCard() {
+  return (
+    <div className="skeleton-card" aria-hidden="true">
+      <div className="skeleton skeleton-media" />
+      <div className="skeleton skeleton-line title" />
+      <div className="skeleton skeleton-line" />
+      <div className="skeleton skeleton-line short" />
+    </div>
+  );
+}
+
 const styles = {
-  searchWrap: {
-    position: "relative",
+  kicker: {
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontStyle: "italic",
+    color: "#C97B5B",
+    fontSize: 16,
+    margin: 0,
+  },
+  title: {
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontSize: 40,
+    fontWeight: 700,
+    color: "#2D5F4C",
+    margin: "12px 0 8px",
+    lineHeight: 1.15,
+  },
+  count: { fontSize: 14, color: "#C97B5B", margin: "0 0 28px" },
+  searchWrap: { position: "relative", maxWidth: 640 },
+  searchIcon: {
+    position: "absolute",
+    left: 16,
+    top: "50%",
+    transform: "translateY(-50%)",
+    display: "flex",
+    color: "#6B6B63",
+    pointerEvents: "none",
   },
   searchInput: {
     width: "100%",
-    padding: "14px 44px 14px 18px",
+    padding: "14px 44px 14px 46px",
     fontSize: 16,
     color: "#2B2B2B",
     backgroundColor: "#FCFAF5",
@@ -62,18 +97,13 @@ const styles = {
     backgroundColor: "#FCFAF5",
   },
   cardLink: {
+    display: "block",
+    height: "100%",
     textDecoration: "none",
     color: "inherit",
     cursor: "pointer",
   },
-  count: {
-    marginTop: 32,
-    fontSize: 14,
-    color: "#C97B5B",
-  },
-  gridWrap: {
-    marginTop: 40,
-  },
+  gridWrap: { marginTop: 32 },
 };
 
 export default function EntriesPage() {
@@ -122,8 +152,10 @@ export default function EntriesPage() {
   let entriesContent;
   if (loading) {
     entriesContent = (
-      <div style={styles.emptyState}>
-        <p>Loading entries…</p>
+      <div className="entries-grid" style={styles.gridWrap} aria-busy="true">
+        {Array.from({ length: 6 }, (_, i) => (
+          <SkeletonCard key={i} />
+        ))}
       </div>
     );
   } else if (filteredEntries.length === 0) {
@@ -172,7 +204,22 @@ export default function EntriesPage() {
 
   return (
     <main className="page-container wide">
+      <p className="fade-in-up" style={styles.kicker}>
+        {t.hero_kicker}
+      </p>
+      <h1 className="fade-in-up" style={styles.title}>
+        {t.nav_entries}
+      </h1>
+      <p style={styles.count}>
+        {loading
+          ? "\u00A0"
+          : `${t.entries_count_prefix} ${entries.length} ${t.entries_count_suffix}`}
+      </p>
+
       <div style={styles.searchWrap}>
+        <span style={styles.searchIcon}>
+          <SearchIcon />
+        </span>
         <input
           type="text"
           value={query}
@@ -194,10 +241,6 @@ export default function EntriesPage() {
       </div>
 
       {entriesContent}
-
-      <p style={styles.count}>
-        {t.entries_count_prefix} {entries.length} {t.entries_count_suffix}
-      </p>
     </main>
   );
 }
