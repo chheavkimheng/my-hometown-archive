@@ -8,7 +8,7 @@ const SLIDE_MS = 6000;
 
 const styles = {
   wrap: { position: "absolute", inset: 0 },
-  image: { objectFit: "cover", objectPosition: "center" },
+  image: { objectFit: "cover" },
 };
 
 export default function HeroSlideshow({ images }) {
@@ -28,16 +28,17 @@ export default function HeroSlideshow({ images }) {
 
   return (
     <div style={styles.wrap} aria-hidden="true">
-      {images.map((src, index) => (
+      {images.map(({ src, position }, index) => (
         <Image
           key={src}
           src={src}
           alt=""
           fill
           priority={index === 0}
+          quality={90}
           sizes="100vw"
           className={`hero-slide ${index === current ? "is-active" : ""}`}
-          style={styles.image}
+          style={{ ...styles.image, objectPosition: position ?? "center" }}
         />
       ))}
     </div>

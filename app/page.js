@@ -11,9 +11,9 @@ import HeroSlideshow from "../components/HeroSlideshow.js";
 
 // The photos behind the title, in the order they appear. Change a path to use another picture from public/.
 const HERO_IMAGES = [
-  "/images/hero-1.jpg",
-  "/images/hero-2.jpg",
-  "/images/hero-3.jpg",
+  { src: "/images/hero-1.jpg", position: "center 30%" },
+  { src: "/images/hero-2.jpg", position: "center 30%" },
+  { src: "/images/hero-3.jpg", position: "center 30%" },
 ];
 
 function truncate(text, maxLength) {
@@ -35,7 +35,7 @@ const styles = {
     position: "absolute",
     inset: 0,
     background:
-      "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.3) 80%)",
+      "radial-gradient(ellipse at center, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.12) 85%)",
   },
   heroText: {
     position: "relative",
