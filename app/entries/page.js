@@ -38,55 +38,37 @@ function SkeletonCard() {
 }
 
 const styles = {
-  kicker: {
-    fontFamily: "Georgia, 'Times New Roman', serif",
-    fontStyle: "italic",
-    color: "#C97B5B",
-    fontSize: 16,
-    margin: 0,
+  headerRow: {
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    gap: "24px 32px",
+  },
+  accent: {
+    width: 48,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#C97B5B",
+    marginBottom: 16,
   },
   title: {
     fontFamily: "Georgia, 'Times New Roman', serif",
-    fontSize: 40,
+    fontSize: "clamp(34px, 5vw, 46px)",
     fontWeight: 700,
     color: "#2D5F4C",
-    margin: "12px 0 8px",
+    margin: 0,
     lineHeight: 1.15,
   },
-  count: { fontSize: 14, color: "#C97B5B", margin: "0 0 28px" },
-  searchWrap: { position: "relative", maxWidth: 640 },
-  searchIcon: {
-    position: "absolute",
-    left: 16,
-    top: "50%",
-    transform: "translateY(-50%)",
-    display: "flex",
-    color: "#6B6B63",
-    pointerEvents: "none",
-  },
-  searchInput: {
-    width: "100%",
-    padding: "14px 44px 14px 46px",
-    fontSize: 16,
-    color: "#2B2B2B",
-    backgroundColor: "#FCFAF5",
-    border: "1px solid #D8DED5",
-    borderRadius: 10,
-    boxSizing: "border-box",
-  },
-  clearButton: {
-    position: "absolute",
-    right: 14,
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "none",
-    border: "none",
-    color: "#6B6B63",
-    cursor: "pointer",
-    padding: 4,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  countRow: { minHeight: 34, marginTop: 14 },
+  count: {
+    display: "inline-block",
+    margin: 0,
+    padding: "6px 14px",
+    fontSize: 14,
+    color: "#2D5F4C",
+    backgroundColor: "#E6EFE9",
+    borderRadius: 999,
   },
   emptyState: {
     marginTop: 32,
@@ -103,7 +85,7 @@ const styles = {
     color: "inherit",
     cursor: "pointer",
   },
-  gridWrap: { marginTop: 32 },
+  gridWrap: { marginTop: 40 },
 };
 
 export default function EntriesPage() {
@@ -204,40 +186,45 @@ export default function EntriesPage() {
 
   return (
     <main className="page-container wide">
-      <p className="fade-in-up" style={styles.kicker}>
-        {t.hero_kicker}
-      </p>
-      <h1 className="fade-in-up" style={styles.title}>
-        {t.nav_entries}
-      </h1>
-      <p style={styles.count}>
-        {loading
-          ? "\u00A0"
-          : `${t.entries_count_prefix} ${entries.length} ${t.entries_count_suffix}`}
-      </p>
+      <div style={styles.headerRow}>
+        <div>
+          <div style={styles.accent} aria-hidden="true" />
+          <h1 className="fade-in-up" style={styles.title}>
+            {t.nav_entries}
+          </h1>
+          <div style={styles.countRow}>
+            {!loading && (
+              <p style={styles.count}>
+                {t.entries_count_prefix} <strong>{entries.length}</strong>{" "}
+                {t.entries_count_suffix}
+              </p>
+            )}
+          </div>
+        </div>
 
-      <div style={styles.searchWrap}>
-        <span style={styles.searchIcon}>
-          <SearchIcon />
-        </span>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t.search_placeholder}
-          aria-label={t.search_placeholder}
-          style={styles.searchInput}
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            aria-label="Clear search"
-            style={styles.clearButton}
-          >
-            <ClearIcon />
-          </button>
-        )}
+        <div className="search-field">
+          <span className="search-icon">
+            <SearchIcon />
+          </span>
+          <input
+            type="text"
+            className="search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t.search_placeholder}
+            aria-label={t.search_placeholder}
+          />
+          {query && (
+            <button
+              type="button"
+              className="search-clear"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+            >
+              <ClearIcon />
+            </button>
+          )}
+        </div>
       </div>
 
       {entriesContent}
