@@ -4,26 +4,25 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import collection from "../collection.config.js";
 import translations from "../data/translations.js";
+import { HERO_IMAGES } from "../data/heroImages.js";
 import { createClient } from "../utils/supabase/client.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
 import HeroSlideshow from "../components/HeroSlideshow.js";
-import { HERO_IMAGES } from "../data/heroImages.js";
+import HomeStats from "../components/HomeStats.js";
+import HomeDays from "../components/HomeDays.js";
+import HomeFeatured from "../components/HomeFeatured.js";
 
-// The photos' shape (width / height). The header takes this shape, so the whole photo shows.
-// If you swap in photos with a different shape, change these two numbers.
+// The photos' shape (width / height). On wide screens the header takes this shape;
+// on phones minHeight keeps room for the title and buttons.
 const HERO_RATIO = "1376 / 560";
-
-function truncate(text, maxLength) {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + "…";
-}
 
 const styles = {
   hero: {
     position: "relative",
     width: "100%",
     aspectRatio: HERO_RATIO,
+    minHeight: 440,
     display: "flex",
     alignItems: "center",
     flexShrink: 0,
@@ -41,7 +40,7 @@ const styles = {
     width: "100%",
     maxWidth: 1100,
     margin: "0 auto",
-    padding: "24px",
+    padding: "40px 24px 88px",
     textAlign: "center",
   },
   kicker: {
@@ -61,79 +60,18 @@ const styles = {
     color: "#FFFFFF",
     textShadow: "0 2px 14px rgba(0, 0, 0, 0.55)",
   },
-  featuresSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 56,
-  },
-  featureTitle: {
-    fontFamily: "Georgia, 'Times New Roman', serif",
-    fontSize: 26,
-    fontWeight: 700,
-    color: "#2D5F4C",
-    margin: "0 0 12px",
-  },
-  featureExcerpt: {
-    fontSize: 16,
-    lineHeight: 1.7,
-    color: "#2B2B2B",
-    margin: 0,
-  },
-  ctaWrap: {
-    marginTop: 56,
-  },
-  ctaButton: {
-    display: "inline-block",
-    padding: "14px 32px",
-    color: "#FCFAF5",
-    fontSize: 16,
-    fontWeight: 600,
-    textDecoration: "none",
-    borderRadius: 8,
-  },
-  statusText: {
-    fontSize: 15,
-    color: "#6B6B63",
-  },
 };
-
-function FeatureRow({ entryId, entryImage, imageOnRight, displayTitle, displayDescription }) {
-  const [rowRef, rowVisible] = useScrollReveal();
-
-  const media = (
-    <div className="feature-row-media" key="media">
-      {entryImage && <img src={entryImage} alt={displayTitle} />}
-    </div>
-  );
-  const text = (
-    <div className="feature-row-text" key="text">
-      <h3 style={styles.featureTitle}>{displayTitle}</h3>
-      <p style={styles.featureExcerpt}>
-        {truncate(displayDescription, 170)}
-      </p>
-    </div>
-  );
-
-  return (
-    <Link
-      href={`/entries/${entryId}`}
-      ref={rowRef}
-      className={`feature-row fade-in-on-scroll ${
-        rowVisible ? "is-visible" : ""
-      }`}
-    >
-      {imageOnRight ? [text, media] : [media, text]}
-    </Link>
-  );
-}
 
 export default function Home() {
   const { lang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
   const archiveName = lang === "km" ? t.archive_name : collection.name;
+  const curatorName = lang === "km" ? t.curator_name : collection.curator;
 
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [quoteRef, quoteVisible] = useScrollReveal();
+  const [ctaRef, ctaVisible] = useScrollReveal();
 
   useEffect(() => {
     let active = true;
@@ -141,7 +79,7 @@ export default function Home() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("entries")
-        .select("id, slug, title, description, image:photo_url")
+        .select("id, slug, title, description, place, image:photo_url")
         .eq("status", "published")
         .order("created_at", { ascending: false });
 
@@ -158,43 +96,6 @@ export default function Home() {
     };
   }, []);
 
-  const featuredEntries = entries.slice(0, 3);
-
-  const [ctaRef, ctaVisible] = useScrollReveal();
-
-  let entriesContent;
-  if (loading) {
-    entriesContent = <p style={styles.statusText}>Loading entries…</p>;
-  } else if (featuredEntries.length === 0) {
-    entriesContent = <p style={styles.statusText}>{t.no_results}</p>;
-  } else {
-    entriesContent = (
-      <div style={styles.featuresSection}>
-        {featuredEntries.map((entry, index) => {
-          const km = translations.km[entry.slug];
-          const displayTitle =
-            lang === "km" && km?.title ? km.title : entry.title;
-          const displayDescription =
-            lang === "km" && km?.description
-              ? km.description
-              : entry.description;
-          const imageOnRight = index !== 1;
-
-          return (
-            <FeatureRow
-              key={entry.id}
-              entryId={entry.id}
-              entryImage={entry.image}
-              imageOnRight={imageOnRight}
-              displayTitle={displayTitle}
-              displayDescription={displayDescription}
-            />
-          );
-        })}
-      </div>
-    );
-  }
-
   return (
     <>
       <section style={styles.hero}>
@@ -207,22 +108,51 @@ export default function Home() {
           <h1 className="fade-in-up" style={styles.title}>
             {archiveName}
           </h1>
+          <div className="hero-actions fade-in-up">
+            <Link href="/entries" className="hero-btn is-primary">
+              {t.cta_button}
+            </Link>
+            <Link href="/about" className="hero-btn">
+              {t.nav_about}
+            </Link>
+          </div>
         </div>
       </section>
 
-      <main className="page-container">
-        {entriesContent}
+      <div className="home-stats-wrap">
+        <HomeStats entryCount={loading ? null : entries.length} />
+      </div>
 
-        <div
-          ref={ctaRef}
-          className={`fade-in-on-scroll ${ctaVisible ? "is-visible" : ""}`}
-          style={styles.ctaWrap}
-        >
-          <Link href="/entries" className="cta-button" style={styles.ctaButton}>
-            {t.cta_button}
-          </Link>
-        </div>
+      <main className="page-container">
+        <HomeDays />
+        <HomeFeatured entries={entries.slice(0, 3)} loading={loading} />
       </main>
+
+      <section
+        ref={quoteRef}
+        className={`home-quote fade-in-on-scroll ${quoteVisible ? "is-visible" : ""}`}
+      >
+        <div className="home-quote-inner">
+          <span className="home-quote-mark" aria-hidden="true">
+            “
+          </span>
+          <blockquote className="home-quote-text">{t.home_quote}</blockquote>
+          <p className="home-quote-by">— {curatorName}</p>
+        </div>
+      </section>
+
+      <div className="home-cta-wrap">
+        <section
+          ref={ctaRef}
+          className={`home-cta fade-in-on-scroll ${ctaVisible ? "is-visible" : ""}`}
+        >
+          <h2 className="home-cta-title">{t.home_cta_title}</h2>
+          <p className="home-cta-text">{t.home_cta_text}</p>
+          <Link href="/contribute" className="btn-primary">
+            + {t.my_add_entry}
+          </Link>
+        </section>
+      </div>
     </>
   );
 }
