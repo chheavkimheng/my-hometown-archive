@@ -8,17 +8,11 @@ import { createClient } from "../utils/supabase/client.js";
 import { useLanguage } from "../context/LanguageContext.js";
 import { useScrollReveal } from "../hooks/useScrollReveal.js";
 import HeroSlideshow from "../components/HeroSlideshow.js";
+import { HERO_IMAGES } from "../data/heroImages.js";
 
 // The photos' shape (width / height). The header takes this shape, so the whole photo shows.
 // If you swap in photos with a different shape, change these two numbers.
 const HERO_RATIO = "1376 / 560";
-
-// The photos behind the title, in the order they appear. Change a path to use another picture from public/.
-const HERO_IMAGES = [
-  { src: "/images/hero-1.jpg", position: "center 30%" },
-  { src: "/images/hero-2.jpg", position: "center 30%" },
-  { src: "/images/hero-3.jpg", position: "center 30%" },
-];
 
 function truncate(text, maxLength) {
   if (text.length <= maxLength) return text;

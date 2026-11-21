@@ -47,17 +47,15 @@ export default function ContributePage() {
 
   if (!user) {
     return (
-      <main className="page-container">
-        <LoginGate
-          title={t.gate_contribute_title}
-          text={t.gate_contribute_text}
-          primaryHref="/signup?next=/contribute"
-          primaryLabel={t.nav_signup}
-          secondaryText={t.have_account_prompt}
-          secondaryHref="/login?next=/contribute"
-          secondaryLabel={t.nav_login}
-        />
-      </main>
+      <LoginGate
+        title={t.gate_contribute_title}
+        text={t.gate_contribute_text}
+        primaryHref="/signup?next=/contribute"
+        primaryLabel={t.nav_signup}
+        secondaryText={t.have_account_prompt}
+        secondaryHref="/login?next=/contribute"
+        secondaryLabel={t.nav_login}
+      />
     );
   }
 

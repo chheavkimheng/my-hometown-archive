@@ -897,23 +897,142 @@ select.form-control {
   }
 }
 
-/* Prompt shown to visitors who need an account for a page. */
-.gate {
-  max-width: 520px;
-  margin: 32px auto 0;
-  padding: 48px 32px;
-  text-align: center;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(201, 123, 91, 0.14), transparent 60%),
-    #FCFAF5;
-  border: 1px solid #D8DED5;
-  border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+/* ---------- Log in, sign up and "you need an account" pages ---------- */
+.auth-stage {
+  position: relative;
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 24px;
+  overflow: hidden;
+  background-color: #24493A;
 }
-.gate-icon {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 18px;
+.auth-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)),
+    linear-gradient(rgba(36, 73, 58, 0.5), rgba(36, 73, 58, 0.5));
+}
+.auth-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  width: 100%;
+  max-width: 960px;
+  overflow: hidden;
+  background-color: #FCFAF5;
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+}
+
+/* Left panel: deep green with the garland on top. */
+.auth-aside {
+  display: flex;
+  flex-direction: column;
+  color: #FFFFFF;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201, 123, 91, 0.35), transparent 50%),
+    linear-gradient(180deg, #2D5F4C 0%, #24493A 100%);
+}
+.bunting {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.auth-aside-body {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 32px 36px;
+}
+.auth-kicker {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #F6D5C2;
+}
+.auth-brand {
+  margin: 6px 0 24px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.auth-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.auth-benefit {
+  display: flex;
+  gap: 14px;
+}
+.auth-benefit-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+}
+.auth-benefit-title {
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.auth-benefit-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Right panel: the form. */
+.auth-main {
+  display: flex;
+  flex-direction: column;
+  padding: 36px 40px 28px;
+}
+.auth-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  padding: 4px;
+  background-color: #ECE7DC;
+  border-radius: 12px;
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #6B6B63;
+  text-decoration: none;
+  border-radius: 9px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.auth-tab:hover {
+  color: #2D5F4C;
+}
+.auth-tab.is-active {
+  color: #2D5F4C;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+.auth-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -921,30 +1040,103 @@ select.form-control {
   background-color: #E6EFE9;
   border-radius: 50%;
 }
-.gate-title {
-  margin: 0 0 10px;
+.auth-title {
+  margin: 0 0 8px;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   color: #2D5F4C;
 }
-.gate-text {
-  margin: 0 0 26px;
-  font-size: 16px;
+.auth-subtitle {
+  margin: 0 0 24px;
+  font-size: 15px;
   line-height: 1.7;
   color: #6B6B63;
 }
-.gate-switch {
-  margin: 20px 0 0;
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.auth-form .form-submit {
+  width: 100%;
+}
+.auth-cta {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+.auth-switch {
+  margin: 18px 0 0;
+  text-align: center;
   font-size: 14px;
   color: #6B6B63;
 }
-.gate-switch a {
+.auth-switch a {
   font-weight: 600;
   color: #2D5F4C;
   text-decoration: none;
 }
-.gate-switch a:hover {
+.auth-switch a:hover {
   text-decoration: underline;
+}
+.auth-back {
+  align-self: center;
+  margin-top: 24px;
+  font-size: 14px;
+  color: #6B6B63;
+  text-decoration: none;
+}
+.auth-back:hover {
+  color: #2D5F4C;
+}
+
+/* Password box with the show/hide eye. */
+.password-wrap {
+  position: relative;
+}
+.password-wrap .form-control {
+  padding-right: 48px;
+}
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  padding: 8px;
+  color: #6B6B63;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.password-toggle:hover {
+  color: #2D5F4C;
+  background-color: #ECE7DC;
+}
+
+/* Phones and small tablets: one column, form first, benefits hidden. */
+@media (max-width: 860px) {
+  .auth-stage {
+    padding: 32px 16px;
+  }
+  .auth-card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+  .auth-benefits {
+    display: none;
+  }
+  .auth-aside-body {
+    padding-bottom: 20px;
+  }
+  .auth-brand {
+    margin-bottom: 0;
+  }
+  .auth-main {
+    padding: 28px 24px 24px;
+  }
 }
