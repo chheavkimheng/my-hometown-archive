@@ -7,12 +7,18 @@
 
 import { CATEGORIES } from "../data/entryOptions.js";
 
-const LIMITS = {
-  title: 100,
-  description: 1000,
-  contributor: 100,
-  place: 150,
-  source: 150,
+// Rules you may want to flip. With the Khmer fields required, English is optional;
+// set REQUIRE_ENGLISH to true if every entry must have both languages.
+export const REQUIRE_KHMER = true;
+export const REQUIRE_ENGLISH = false;
+
+// Fewest and most characters each field accepts. The maximums match the database checks.
+export const LIMITS = {
+  title: { min: 3, max: 100 },
+  description: { min: 20, max: 1000 },
+  contributor: { min: 2, max: 100 },
+  place: { min: 2, max: 150 },
+  source: { min: 2, max: 150 },
 };
 
 const ALLOWED_PHOTO_TYPES = {
@@ -27,7 +33,32 @@ export function extensionForPhotoType(type) {
   return ALLOWED_PHOTO_TYPES[type] ?? null;
 }
 
-const tooLong = (max) => ({ key: "error_too_long", max });
+// Khmer letters, vowel signs and digits all live in the Unicode block U+1780 to U+17FF.
+const KHMER_CHARACTERS = /[\u1780-\u17FF]/g;
+const LATIN_LETTERS = /[A-Za-z]/g;
+
+// "Written in Khmer" means Khmer characters are present and at least as common as Latin letters,
+// so a name or a few English words are fine but a sentence in English is not.
+function isMostlyKhmer(text) {
+  const khmer = (text.match(KHMER_CHARACTERS) ?? []).length;
+  const latin = (text.match(LATIN_LETTERS) ?? []).length;
+  return khmer > 0 && khmer >= latin;
+}
+
+function lengthError(text, { min, max }) {
+  const length = [...text.trim()].length;
+  if (length < min) return { key: "error_too_short", min };
+  if (length > max) return { key: "error_too_long", max };
+  return null;
+}
+
+// Empty is fine when the field is optional. Otherwise the text has to pass the Khmer rule
+// (for the Khmer fields) and then the length rule.
+function textError(text, rule, { requiredKey = null, khmer = false } = {}) {
+  if (!text.trim()) return requiredKey ? { key: requiredKey } : null;
+  if (khmer && !isMostlyKhmer(text)) return { key: "error_khmer_only" };
+  return lengthError(text, rule);
+}
 
 // photoRequired: true when creating (always need a photo), or when
 // editing an entry that doesn't already have one. False when editing
@@ -45,41 +76,38 @@ export function validateEntry({
   photoRequired = true,
 }) {
   const errors = {};
+  const set = (field, error) => {
+    if (error) errors[field] = error;
+  };
 
-  // English or Khmer is enough, so a contributor who only writes Khmer can still contribute.
-  if (!title.trim() && !titleKm.trim()) {
-    errors.title = { key: "error_title_either" };
-  } else if (title.trim().length > LIMITS.title) {
-    errors.title = tooLong(LIMITS.title);
-  }
-  if (titleKm.trim().length > LIMITS.title) {
-    errors.titleKm = tooLong(LIMITS.title);
-  }
+  set("title", textError(title, LIMITS.title, {
+    requiredKey: REQUIRE_ENGLISH ? "error_title_required" : null,
+  }));
+  set("titleKm", textError(titleKm, LIMITS.title, {
+    requiredKey: REQUIRE_KHMER ? "error_title_km_required" : null,
+    khmer: true,
+  }));
+  set("description", textError(description, LIMITS.description, {
+    requiredKey: REQUIRE_ENGLISH ? "error_description_required" : null,
+  }));
+  set("descriptionKm", textError(descriptionKm, LIMITS.description, {
+    requiredKey: REQUIRE_KHMER ? "error_description_km_required" : null,
+    khmer: true,
+  }));
 
-  if (!description.trim() && !descriptionKm.trim()) {
-    errors.description = { key: "error_description_either" };
-  } else if (description.trim().length > LIMITS.description) {
-    errors.description = tooLong(LIMITS.description);
+  // Never save an entry with no title or description in either language.
+  if (!title.trim() && !titleKm.trim() && !errors.title && !errors.titleKm) {
+    errors.title = { key: "error_title_required" };
   }
-  if (descriptionKm.trim().length > LIMITS.description) {
-    errors.descriptionKm = tooLong(LIMITS.description);
-  }
-
-  if (!contributor.trim()) {
-    errors.contributor = { key: "error_contributor_required" };
-  } else if (contributor.trim().length > LIMITS.contributor) {
-    errors.contributor = tooLong(LIMITS.contributor);
-  }
-
-  if (place.trim().length > LIMITS.place) {
-    errors.place = tooLong(LIMITS.place);
+  if (!description.trim() && !descriptionKm.trim() && !errors.description && !errors.descriptionKm) {
+    errors.description = { key: "error_description_required" };
   }
 
-  if (!source.trim()) {
-    errors.source = { key: "error_source_required" };
-  } else if (source.trim().length > LIMITS.source) {
-    errors.source = tooLong(LIMITS.source);
-  }
+  set("contributor", textError(contributor, LIMITS.contributor, {
+    requiredKey: "error_contributor_required",
+  }));
+  set("place", textError(place, LIMITS.place));
+  set("source", textError(source, LIMITS.source, { requiredKey: "error_source_required" }));
 
   if (!CATEGORIES.includes(category)) {
     errors.category = { key: "error_category_required" };

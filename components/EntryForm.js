@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client.js";
-import { validateEntry, extensionForPhotoType } from "../utils/validateEntry.js";
+import {
+  validateEntry,
+  extensionForPhotoType,
+  LIMITS,
+  REQUIRE_ENGLISH,
+  REQUIRE_KHMER,
+} from "../utils/validateEntry.js";
 import { CATEGORIES, FESTIVAL_DAYS, TAGS } from "../data/entryOptions.js";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
@@ -33,7 +39,12 @@ export default function EntryForm({ entry }) {
   const router = useRouter();
   const { lang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
-  const msg = (error) => (error ? t[error.key].replace("{max}", error.max ?? "") : null);
+  const msg = (error) =>
+    error
+      ? t[error.key].replace("{max}", error.max ?? "").replace("{min}", error.min ?? "")
+      : null;
+  const counter = (value, rule) => ({ current: [...value].length, max: rule.max });
+  const optionalIf = (isRequired) => (isRequired ? "" : ` ${t.form_optional}`);
 
   const toggleTag = (key) =>
     setTags((current) =>
@@ -168,17 +179,39 @@ export default function EntryForm({ entry }) {
 
       <FormSection title={t.form_section_story}>
         <div className="form-grid">
-          <FormField id="title" label={t.form_title_en} error={msg(errors.title)} hint={t.form_either_hint}>
-            <input id="title" type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <FormField
+            id="title"
+            label={`${t.form_title_en}${optionalIf(REQUIRE_ENGLISH)}`}
+            error={msg(errors.title)}
+            count={counter(title, LIMITS.title)}
+          >
+            <input id="title" type="text" className="form-control" maxLength={LIMITS.title.max} value={title} onChange={(e) => setTitle(e.target.value)} />
           </FormField>
-          <FormField id="titleKm" label={t.form_title_km} error={msg(errors.titleKm)} hint={t.form_khmer_hint}>
-            <input id="titleKm" type="text" lang="km" className="form-control" value={titleKm} onChange={(e) => setTitleKm(e.target.value)} />
+          <FormField
+            id="titleKm"
+            label={`${t.form_title_km}${optionalIf(REQUIRE_KHMER)}`}
+            error={msg(errors.titleKm)}
+            hint={t.form_khmer_hint}
+            count={counter(titleKm, LIMITS.title)}
+          >
+            <input id="titleKm" type="text" lang="km" className="form-control" maxLength={LIMITS.title.max} value={titleKm} onChange={(e) => setTitleKm(e.target.value)} />
           </FormField>
-          <FormField id="description" label={t.form_description_en} error={msg(errors.description)}>
-            <textarea id="description" className="form-control" value={description} onChange={(e) => setDescription(e.target.value)} />
+          <FormField
+            id="description"
+            label={`${t.form_description_en}${optionalIf(REQUIRE_ENGLISH)}`}
+            error={msg(errors.description)}
+            count={counter(description, LIMITS.description)}
+          >
+            <textarea id="description" className="form-control" maxLength={LIMITS.description.max} value={description} onChange={(e) => setDescription(e.target.value)} />
           </FormField>
-          <FormField id="descriptionKm" label={t.form_description_km} error={msg(errors.descriptionKm)}>
-            <textarea id="descriptionKm" lang="km" className="form-control" value={descriptionKm} onChange={(e) => setDescriptionKm(e.target.value)} />
+          <FormField
+            id="descriptionKm"
+            label={`${t.form_description_km}${optionalIf(REQUIRE_KHMER)}`}
+            error={msg(errors.descriptionKm)}
+            hint={t.form_khmer_hint}
+            count={counter(descriptionKm, LIMITS.description)}
+          >
+            <textarea id="descriptionKm" lang="km" className="form-control" maxLength={LIMITS.description.max} value={descriptionKm} onChange={(e) => setDescriptionKm(e.target.value)} />
           </FormField>
         </div>
       </FormSection>
@@ -201,14 +234,14 @@ export default function EntryForm({ entry }) {
               ))}
             </select>
           </FormField>
-          <FormField id="contributor" label={t.contributor_label} error={msg(errors.contributor)}>
-            <input id="contributor" type="text" className="form-control" value={contributor} onChange={(e) => setContributor(e.target.value)} />
+          <FormField id="contributor" label={t.contributor_label} error={msg(errors.contributor)} count={counter(contributor, LIMITS.contributor)}>
+            <input id="contributor" type="text" className="form-control" maxLength={LIMITS.contributor.max} value={contributor} onChange={(e) => setContributor(e.target.value)} />
           </FormField>
-          <FormField id="place" label={t.form_place} error={msg(errors.place)}>
-            <input id="place" type="text" className="form-control" value={place} onChange={(e) => setPlace(e.target.value)} />
+          <FormField id="place" label={t.form_place} error={msg(errors.place)} count={counter(place, LIMITS.place)}>
+            <input id="place" type="text" className="form-control" maxLength={LIMITS.place.max} value={place} onChange={(e) => setPlace(e.target.value)} />
           </FormField>
-          <FormField id="source" label={t.source_label} hint={t.form_source_hint} error={msg(errors.source)} full>
-            <input id="source" type="text" className="form-control" value={source} onChange={(e) => setSource(e.target.value)} />
+          <FormField id="source" label={t.source_label} hint={t.form_source_hint} error={msg(errors.source)} count={counter(source, LIMITS.source)} full>
+            <input id="source" type="text" className="form-control" maxLength={LIMITS.source.max} value={source} onChange={(e) => setSource(e.target.value)} />
           </FormField>
         </div>
       </FormSection>
