@@ -2,13 +2,17 @@
 //
 // Field rules for a contribution, agreed on in Lab 7 Step 3. Shared by
 // the contribute form and the edit form, so the rules only ever live
-// in one place.
+// in one place. Each error is a key into data/translations.js (plus a
+// number when it needs one), so the form can show it in either language.
+
+import { CATEGORIES } from "../data/entryOptions.js";
 
 const LIMITS = {
   title: 100,
   description: 1000,
   contributor: 100,
   place: 150,
+  source: 150,
 };
 
 const ALLOWED_PHOTO_TYPES = {
@@ -23,33 +27,62 @@ export function extensionForPhotoType(type) {
   return ALLOWED_PHOTO_TYPES[type] ?? null;
 }
 
+const tooLong = (max) => ({ key: "error_too_long", max });
+
 // photoRequired: true when creating (always need a photo), or when
 // editing an entry that doesn't already have one. False when editing
 // an entry that already has a photo and the user didn't pick a new one.
-export function validateEntry({ title, description, contributor, place, photoFile, photoRequired = true }) {
+export function validateEntry({
+  title,
+  titleKm,
+  description,
+  descriptionKm,
+  contributor,
+  place,
+  source,
+  category,
+  photoFile,
+  photoRequired = true,
+}) {
   const errors = {};
 
-  // Each error is a key into data/translations.js, plus the number it needs, so the form can show it in either language.
-  if (!title.trim()) {
-    errors.title = { key: "error_title_required" };
+  // English or Khmer is enough, so a contributor who only writes Khmer can still contribute.
+  if (!title.trim() && !titleKm.trim()) {
+    errors.title = { key: "error_title_either" };
   } else if (title.trim().length > LIMITS.title) {
-    errors.title = { key: "error_too_long", max: LIMITS.title };
+    errors.title = tooLong(LIMITS.title);
+  }
+  if (titleKm.trim().length > LIMITS.title) {
+    errors.titleKm = tooLong(LIMITS.title);
   }
 
-  if (!description.trim()) {
-    errors.description = { key: "error_description_required" };
+  if (!description.trim() && !descriptionKm.trim()) {
+    errors.description = { key: "error_description_either" };
   } else if (description.trim().length > LIMITS.description) {
-    errors.description = { key: "error_too_long", max: LIMITS.description };
+    errors.description = tooLong(LIMITS.description);
+  }
+  if (descriptionKm.trim().length > LIMITS.description) {
+    errors.descriptionKm = tooLong(LIMITS.description);
   }
 
   if (!contributor.trim()) {
     errors.contributor = { key: "error_contributor_required" };
   } else if (contributor.trim().length > LIMITS.contributor) {
-    errors.contributor = { key: "error_too_long", max: LIMITS.contributor };
+    errors.contributor = tooLong(LIMITS.contributor);
   }
 
   if (place.trim().length > LIMITS.place) {
-    errors.place = { key: "error_too_long", max: LIMITS.place };
+    errors.place = tooLong(LIMITS.place);
+  }
+
+  if (!source.trim()) {
+    errors.source = { key: "error_source_required" };
+  } else if (source.trim().length > LIMITS.source) {
+    errors.source = tooLong(LIMITS.source);
+  }
+
+  if (!CATEGORIES.includes(category)) {
+    errors.category = { key: "error_category_required" };
   }
 
   if (photoRequired && !photoFile) {

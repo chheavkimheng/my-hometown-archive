@@ -13,8 +13,9 @@ const styles = {
     fontSize: 36,
     fontWeight: 700,
     color: "#2D5F4C",
-    margin: "0 0 24px",
+    margin: "0 0 8px",
   },
+  subtitle: { fontSize: 17, color: "#6B6B63", margin: "0 0 28px" },
 };
 
 export default function ContributePage() {
@@ -58,6 +59,7 @@ export default function ContributePage() {
   return (
     <main className="page-container">
       <h1 style={styles.title}>{t.contribute_title}</h1>
+      <p style={styles.subtitle}>{t.contribute_subtitle}</p>
       <EntryForm />
     </main>
   );

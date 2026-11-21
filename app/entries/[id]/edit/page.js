@@ -29,7 +29,7 @@ export default function EditEntryPage({ params }) {
 
       const { data, error } = await supabase
         .from("entries")
-        .select("id, title, description, contributor, place, owner, image:photo_url")
+        .select("id, title, title_km, description, description_km, contributor, place, source, category, festival_day, tags, owner, image:photo_url")
         .eq("id", id)
         .single();
 
