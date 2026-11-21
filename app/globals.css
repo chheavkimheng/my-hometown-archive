@@ -2139,3 +2139,88 @@ select.form-control {
     animation: none;
   }
 }
+
+/* Arrow badge shared by the two buttons. */
+.cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+/* "Read the entry": a filled green pill inside the spotlight card. */
+.spotlight-cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background-color: #2D5F4C;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.spotlight-cta .cta-arrow {
+  color: #2D5F4C;
+  background-color: #FFFFFF;
+}
+.spotlight:hover .spotlight-cta {
+  background-color: #24493A;
+  box-shadow: 0 10px 22px rgba(45, 95, 76, 0.3);
+}
+.spotlight:hover .spotlight-cta .cta-arrow {
+  transform: translateX(3px);
+}
+
+/* "View all entries": an outlined pill that fills green on hover. */
+.viewall-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 5px 5px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2D5F4C;
+  text-decoration: none;
+  background-color: #FFFFFF;
+  border: 1.5px solid #2D5F4C;
+  border-radius: 999px;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.viewall-btn .cta-arrow {
+  color: #FFFFFF;
+  background-color: #2D5F4C;
+}
+.viewall-btn:hover {
+  color: #FFFFFF;
+  background-color: #2D5F4C;
+  box-shadow: 0 10px 22px rgba(45, 95, 76, 0.25);
+  transform: translateY(-1px);
+}
+.viewall-btn:hover .cta-arrow {
+  color: #2D5F4C;
+  background-color: #FFFFFF;
+  transform: translateX(3px);
+}
+.viewall-btn:focus-visible {
+  outline: 3px solid rgba(45, 95, 76, 0.35);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-arrow,
+  .spotlight-cta,
+  .viewall-btn {
+    transition: none;
+  }
+  .spotlight:hover .spotlight-cta .cta-arrow,
+  .viewall-btn:hover,
+  .viewall-btn:hover .cta-arrow {
+    transform: none;
+  }
+}

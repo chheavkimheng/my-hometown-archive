@@ -21,6 +21,16 @@ function PinIcon() {
   );
 }
 
+function ArrowIcon() {
+  return (
+    <span className="cta-arrow" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    </span>
+  );
+}
+
 export default function HomeFeatured({ entries, loading }) {
   const { lang } = useLanguage();
   const t = translations[lang]?.ui ?? translations.en.ui;
@@ -50,7 +60,10 @@ export default function HomeFeatured({ entries, loading }) {
                 {view.place}
               </p>
             )}
-            <span className="spotlight-link">{t.home_featured_read} →</span>
+            <span className="spotlight-cta">
+              {t.home_featured_read}
+              <ArrowIcon />
+            </span>
           </div>
         </Link>
 
@@ -77,8 +90,9 @@ export default function HomeFeatured({ entries, loading }) {
           <p className="home-kicker">{t.home_featured_kicker}</p>
           <h2 className="home-title">{t.home_featured_title}</h2>
         </div>
-        <Link href="/entries" className="home-viewall">
-          {t.home_featured_all} →
+        <Link href="/entries" className="viewall-btn">
+          {t.home_featured_all}
+          <ArrowIcon />
         </Link>
       </div>
       {body}
