@@ -104,9 +104,16 @@ export default function AuthShell({ mode, showTabs = true, icon, title, subtitle
           <h1 className="auth-title">{title}</h1>
           {subtitle && <p className="auth-subtitle">{subtitle}</p>}
           {children}
-          <Link href="/" className="auth-back">
-            ← {t.auth_back}
-          </Link>
+          <div className="auth-back-wrap">
+            <Link href="/" className="auth-back">
+              <span className="auth-back-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M11 6l-6 6 6 6" />
+                </svg>
+              </span>
+              {t.auth_back}
+            </Link>
+          </div>
         </div>
       </div>
     </main>
