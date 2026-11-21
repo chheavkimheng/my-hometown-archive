@@ -213,11 +213,14 @@ input:focus {
   bottom: 0;
   right: 0;
   z-index: 2;
-  width: min(320px, 85vw);
+  width: min(340px, 88vw);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background-color: #2D5F4C;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(201, 123, 91, 0.28), transparent 45%),
+    linear-gradient(180deg, #2D5F4C 0%, #24493A 100%);
+  border-top: 3px solid #C97B5B;
   box-shadow: -12px 0 32px rgba(0, 0, 0, 0.25);
   transform: translateX(100%);
   visibility: hidden;
@@ -227,23 +230,6 @@ input:focus {
   transform: translateX(0);
   visibility: visible;
   transition: transform 0.28s ease, visibility 0s;
-}
-
-.nav-panel-link {
-  display: block;
-  padding: 16px 24px;
-  color: #FFFFFF;
-  font-size: 18px;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.35);
-  transition: background-color 0.2s ease;
-}
-/* Only the first link in the drawer gets a top line, so lines never double up. */
-.nav-drawer > .nav-panel-link:first-of-type {
-  border-top: 1px solid rgba(255, 255, 255, 0.35);
-}
-.nav-panel-link:hover {
-  background-color: rgba(255, 255, 255, 0.12);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -372,4 +358,111 @@ input:focus {
 }
 .search-clear:hover {
   background-color: #ECE7DC;
+}
+
+/* Menu rows: icon, label and chevron, with the current page marked. */
+.nav-panel-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  color: #FFFFFF;
+  font-size: 18px;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  transition: background-color 0.2s ease;
+}
+.nav-drawer > .nav-panel-link:first-of-type {
+  border-top: 1px solid rgba(255, 255, 255, 0.22);
+}
+.nav-panel-link svg {
+  flex-shrink: 0;
+}
+.nav-panel-label {
+  flex: 1;
+  min-width: 0;
+}
+.nav-panel-chevron {
+  opacity: 0.5;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.nav-panel-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.nav-panel-link:hover .nav-panel-chevron {
+  opacity: 1;
+  transform: translateX(4px);
+}
+.nav-panel-link.is-current {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+.nav-panel-link.is-current::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #C97B5B;
+}
+
+/* Rows slide in one after another when the drawer opens. */
+.nav-drawer.is-open .nav-panel-link {
+  animation: navLinkIn 0.4s ease both;
+  animation-delay: calc(0.08s + var(--i, 0) * 0.05s);
+}
+@keyframes navLinkIn {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Buttons at the bottom: Log out, or Log in and Sign up. */
+.nav-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 13px 18px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.nav-action:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+.nav-action.is-primary {
+  color: #2D5F4C;
+  background-color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+.nav-action.is-primary:hover {
+  background-color: #F6EEE4;
+}
+
+.nav-panel-link:focus-visible,
+.nav-action:focus-visible {
+  outline: 2px solid #F6D5C2;
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-drawer.is-open .nav-panel-link {
+    animation: none;
+  }
 }
