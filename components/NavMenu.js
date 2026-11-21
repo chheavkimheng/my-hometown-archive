@@ -154,17 +154,17 @@ export default function NavMenu({ open, closeRef, user, isReviewer, onClose, onL
   const t = translations[lang]?.ui ?? translations.en.ui;
   const pathname = usePathname();
 
+  // Add entry and My Entries show for everyone. A visitor who is logged out
+  // meets a sign-up or log-in prompt on those pages.
   const links = [
     { href: "/", label: t.nav_home, icon: "home" },
     { href: "/entries", label: t.nav_entries, icon: "entries" },
     { href: "/about", label: t.nav_about, icon: "about" },
+    { href: "/contribute", label: t.nav_contribute ?? "Add entry", icon: "add" },
+    { href: "/my-entries", label: t.nav_my_entries, icon: "mine" },
   ];
-  if (user) {
-    links.push({ href: "/contribute", label: t.nav_contribute ?? "Add entry", icon: "add" });
-    links.push({ href: "/my-entries", label: t.nav_my_entries, icon: "mine" });
-    // Politeness, not security: the database decides who can really review.
-    if (isReviewer) links.push({ href: "/review", label: t.nav_review, icon: "review" });
-  }
+  // Politeness, not security: the database decides who can really review.
+  if (isReviewer) links.push({ href: "/review", label: t.nav_review, icon: "review" });
 
   const isCurrent = (href) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);

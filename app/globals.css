@@ -896,3 +896,55 @@ select.form-control {
     transform: none;
   }
 }
+
+/* Prompt shown to visitors who need an account for a page. */
+.gate {
+  max-width: 520px;
+  margin: 32px auto 0;
+  padding: 48px 32px;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(201, 123, 91, 0.14), transparent 60%),
+    #FCFAF5;
+  border: 1px solid #D8DED5;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+.gate-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2D5F4C;
+  background-color: #E6EFE9;
+  border-radius: 50%;
+}
+.gate-title {
+  margin: 0 0 10px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #2D5F4C;
+}
+.gate-text {
+  margin: 0 0 26px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #6B6B63;
+}
+.gate-switch {
+  margin: 20px 0 0;
+  font-size: 14px;
+  color: #6B6B63;
+}
+.gate-switch a {
+  font-weight: 600;
+  color: #2D5F4C;
+  text-decoration: none;
+}
+.gate-switch a:hover {
+  text-decoration: underline;
+}

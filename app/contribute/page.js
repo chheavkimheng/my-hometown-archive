@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import EntryForm from "../../components/EntryForm.js";
+import LoginGate from "../../components/LoginGate.js";
 import { createClient } from "../../utils/supabase/client.js";
 import translations from "../../data/translations.js";
 import { useLanguage } from "../../context/LanguageContext.js";
@@ -48,10 +48,15 @@ export default function ContributePage() {
   if (!user) {
     return (
       <main className="page-container">
-        <h1 style={styles.title}>{t.contribute_title}</h1>
-        <p>
-          {t.contribute_login_prompt} <Link href="/login">{t.nav_login}</Link>
-        </p>
+        <LoginGate
+          title={t.gate_contribute_title}
+          text={t.gate_contribute_text}
+          primaryHref="/signup?next=/contribute"
+          primaryLabel={t.nav_signup}
+          secondaryText={t.have_account_prompt}
+          secondaryHref="/login?next=/contribute"
+          secondaryLabel={t.nav_login}
+        />
       </main>
     );
   }

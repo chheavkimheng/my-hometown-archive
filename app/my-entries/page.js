@@ -7,6 +7,7 @@ import EntryCard from "../../components/EntryCard.js";
 import MyEntriesStats from "../../components/MyEntriesStats.js";
 import MyEntriesEmpty from "../../components/MyEntriesEmpty.js";
 import HowReviewWorks from "../../components/HowReviewWorks.js";
+import LoginGate from "../../components/LoginGate.js";
 import { createClient } from "../../utils/supabase/client.js";
 import { useLanguage } from "../../context/LanguageContext.js";
 
@@ -135,10 +136,15 @@ export default function MyEntriesPage() {
   if (!user) {
     return (
       <main className="page-container">
-        <h1 style={styles.title}>{t.nav_my_entries}</h1>
-        <p style={styles.note}>
-          {t.my_login_prompt} <Link href="/login">{t.nav_login}</Link>
-        </p>
+        <LoginGate
+          title={t.gate_my_title}
+          text={t.gate_my_text}
+          primaryHref="/login?next=/my-entries"
+          primaryLabel={t.nav_login}
+          secondaryText={t.no_account_prompt}
+          secondaryHref="/signup?next=/my-entries"
+          secondaryLabel={t.nav_signup}
+        />
       </main>
     );
   }
