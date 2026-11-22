@@ -73,7 +73,7 @@ export default function HomeFeatured({ entries, loading }) {
               const v = localizedEntry(entry, lang);
               return (
                 <Link key={entry.id} href={`/entries/${entry.id}`} className="card-link">
-                  <EntryCard image={entry.image} title={v.title} description={v.description} place={v.place} />
+                  <EntryCard image={entry.image} title={v.title} description={v.description} place={v.place} badge={entry.category ? t[`category_${entry.category}`] : null} />
                 </Link>
               );
             })}

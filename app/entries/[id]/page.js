@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import translations from "../../../data/translations.js";
 import EntryDetail from "../../../components/EntryDetail.js";
 import { createClient } from "../../../utils/supabase/server.js";
 
@@ -9,7 +8,9 @@ export default async function EntryPage({ params }) {
 
   const { data: entry, error } = await supabase
     .from("entries")
-    .select("id, slug, title, description, contributor, place, owner, image:photo_url")
+    .select(
+      "id, slug, title, title_km, description, description_km, contributor, place, source, category, festival_day, tags, owner, image:photo_url"
+    )
     .eq("id", id)
     .single();
 
@@ -20,7 +21,5 @@ export default async function EntryPage({ params }) {
   const { data: userData } = await supabase.auth.getUser();
   const isOwner = userData?.user?.id === entry.owner;
 
-  const translation = translations.km[entry.slug] || null;
-
-  return <EntryDetail entry={entry} translation={translation} isOwner={isOwner} />;
+  return <EntryDetail entry={entry} isOwner={isOwner} />;
 }

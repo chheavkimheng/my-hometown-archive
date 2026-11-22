@@ -79,7 +79,7 @@ export default function Home() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("entries")
-        .select("id, slug, title, description, place, image:photo_url")
+        .select("id, slug, title, title_km, description, description_km, place, category, image:photo_url")
         .eq("status", "published")
         .order("created_at", { ascending: false });
 

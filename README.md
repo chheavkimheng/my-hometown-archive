@@ -87,6 +87,8 @@ flowchart LR
 | `owners edit their own entries` (update) | Only the owner, and the new status must be `pending` unless the editor is a reviewer. |
 | `owners delete their own entries` (delete) | Only the owner. |
 
+Table privileges are kept to the minimum as well. Logged-out visitors can only `select`. Logged-in users can `select`, `insert`, `update` and `delete`, and the policies above decide which rows each of them may touch.
+
 ### Two database functions
 
 - `is_reviewer()` answers yes or no: is the logged-in user on the `reviewers` list? It is `security definer` with an empty `search_path`, so it can read a table nobody else can.
@@ -181,6 +183,7 @@ I used **Claude** in the Claude chat app for all AI-assisted code, and **Gemini*
    No other variables are needed. The publishable key is public by design. It is safe in the browser because all permissions are enforced by RLS and the database functions, not by hiding the key. `.env.local` is in `.gitignore`, so no key is in this repository. A `service_role` or secret key never belongs in this project.
 
 3. **Set up the database.** In your Supabase project, open the SQL Editor and run the files in `supabase/` in order: `01-entries-and-storage.sql`, `02-review-gate.sql`, then `03-entry-details.sql`. In `02`, replace `PASTE-YOUR-UUID-HERE` with your own user id (Authentication, then Users) so you are the first reviewer.
+   The database starts empty. Sign up, add an entry through the form, and it waits in the review queue until you publish it from the Review page.
 
 4. **Run it**
 

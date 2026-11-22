@@ -14,9 +14,21 @@ const styles = {
     overflow: "hidden",
   },
   media: {
+    position: "relative",
     aspectRatio: "4 / 3",
     overflow: "hidden",
     backgroundColor: "#E6EFE9",
+  },
+  badge: {
+    position: "absolute",
+    top: 12,
+    left: 12,
+    padding: "4px 12px",
+    fontSize: 12,
+    fontWeight: 600,
+    color: "#FFFFFF",
+    backgroundColor: "#C97B5B",
+    borderRadius: 999,
   },
   image: { width: "100%", height: "100%", objectFit: "cover", display: "block" },
   body: {
@@ -58,11 +70,12 @@ function PinIcon() {
   );
 }
 
-export default function EntryCard({ image, title, description, place }) {
+export default function EntryCard({ image, title, description, place, badge }) {
   return (
     <div className="entry-card" style={styles.card}>
       <div style={styles.media}>
         {image && <img src={image} alt={title} style={styles.image} />}
+        {badge && <span style={styles.badge}>{badge}</span>}
       </div>
       <div style={styles.body}>
         <h2 style={styles.title}>{title}</h2>

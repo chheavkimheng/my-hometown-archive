@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
+import { localizedEntry } from "../utils/localize.js";
 import EntryOwnerActions from "./EntryOwnerActions.js";
+import EntryChips from "./EntryChips.js";
 
 const styles = {
   backButton: {
@@ -42,6 +43,7 @@ const styles = {
     lineHeight: 1.7,
     margin: "0 0 32px",
     maxWidth: 680,
+    whiteSpace: "pre-wrap",
   },
   metaRow: {
     display: "flex",
@@ -79,23 +81,11 @@ function BackArrowIcon() {
   );
 }
 
-export default function EntryDetail({ entry, translation, isOwner }) {
+export default function EntryDetail({ entry, isOwner }) {
   const { lang } = useLanguage();
   const router = useRouter();
   const t = translations[lang]?.ui ?? translations.en.ui;
-
-  const displayTitle =
-    lang === "km" && translation?.title ? translation.title : entry.title;
-  const displayDescription =
-    lang === "km" && translation?.description
-      ? translation.description
-      : entry.description;
-  const displayContributor =
-    lang === "km" && translation?.contributor
-      ? translation.contributor
-      : entry.contributor;
-  const displayPlace =
-    lang === "km" && translation?.place ? translation.place : entry.place;
+  const view = localizedEntry(entry, lang);
 
   return (
     <main className="page-container fade-in-up">
@@ -110,21 +100,30 @@ export default function EntryDetail({ entry, translation, isOwner }) {
       </button>
 
       {entry.image && (
-        <img src={entry.image} alt={displayTitle} style={styles.image} />
+        <img src={entry.image} alt={view.title} style={styles.image} />
       )}
 
-      <h1 style={styles.title}>{displayTitle}</h1>
-      <p style={styles.description}>{displayDescription}</p>
+      <h1 style={styles.title}>{view.title}</h1>
+      <EntryChips category={entry.category} festivalDay={entry.festival_day} tags={entry.tags} />
+      <p style={styles.description}>{view.description}</p>
 
       <div style={styles.metaRow}>
         <div>
           <p style={styles.metaLabel}>{t.contributor_label}</p>
-          <p style={styles.metaValue}>{displayContributor}</p>
+          <p style={styles.metaValue}>{view.contributor}</p>
         </div>
-        <div>
-          <p style={styles.metaLabel}>{t.place_label}</p>
-          <p style={styles.metaValue}>{displayPlace}</p>
-        </div>
+        {view.place && (
+          <div>
+            <p style={styles.metaLabel}>{t.place_label}</p>
+            <p style={styles.metaValue}>{view.place}</p>
+          </div>
+        )}
+        {view.source && (
+          <div>
+            <p style={styles.metaLabel}>{t.source_label}</p>
+            <p style={styles.metaValue}>{view.source}</p>
+          </div>
+        )}
       </div>
       {isOwner && <EntryOwnerActions entryId={entry.id} photoUrl={entry.image} />}
     </main>

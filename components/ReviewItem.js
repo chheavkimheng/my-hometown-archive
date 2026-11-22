@@ -2,6 +2,7 @@
 
 import translations from "../data/translations.js";
 import { useLanguage } from "../context/LanguageContext.js";
+import EntryChips from "./EntryChips.js";
 
 const button = {
   padding: "10px 20px",
@@ -28,6 +29,9 @@ const styles = {
   },
   title: { fontSize: 20, fontWeight: 700, color: "#2D5F4C", margin: "0 0 8px" },
   description: { fontSize: 15, lineHeight: 1.7, margin: "0 0 12px", whiteSpace: "pre-wrap" },
+  kmBox: { margin: "0 0 14px", padding: "12px 14px", backgroundColor: "#F1F6F3", borderRadius: 8 },
+  kmTitle: { margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: "#2D5F4C" },
+  kmText: { margin: 0, fontSize: 14, lineHeight: 1.7, whiteSpace: "pre-wrap" },
   meta: { fontSize: 13, color: "#6B6B63", margin: "0 0 16px" },
   row: { display: "flex", gap: 12 },
   publish: { ...button, color: "#FCFAF5", backgroundColor: "#2D5F4C", border: "none" },
@@ -42,15 +46,26 @@ export default function ReviewItem({ entry, busy, failed, onReview }) {
   const dim = busy ? styles.busy : {};
   const place = entry.place ? ` · ${t.place_label}: ${entry.place}` : "";
   const submitted = ` · ${t.review_submitted}: ${entry.created_at.slice(0, 10)}`;
+  const source = entry.source ? ` · ${t.source_label}: ${entry.source}` : "";
+  const showKhmer =
+    Boolean(entry.title_km) && entry.title_km !== entry.title;
 
   return (
     <article style={styles.card}>
       {entry.image && <img src={entry.image} alt={entry.title} style={styles.image} />}
       <h2 style={styles.title}>{entry.title}</h2>
       <p style={styles.description}>{entry.description}</p>
+      {showKhmer && (
+        <div style={styles.kmBox} lang="km">
+          <p style={styles.kmTitle}>{entry.title_km}</p>
+          {entry.description_km && <p style={styles.kmText}>{entry.description_km}</p>}
+        </div>
+      )}
+      <EntryChips category={entry.category} festivalDay={entry.festival_day} tags={entry.tags} />
       <p style={styles.meta}>
         {t.contributor_label}: {entry.contributor}
         {place}
+        {source}
         {submitted}
       </p>
       <div style={styles.row}>

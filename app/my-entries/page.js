@@ -10,6 +10,7 @@ import HowReviewWorks from "../../components/HowReviewWorks.js";
 import LoginGate from "../../components/LoginGate.js";
 import { createClient } from "../../utils/supabase/client.js";
 import { useLanguage } from "../../context/LanguageContext.js";
+import { localizedEntry } from "../../utils/localize.js";
 
 const styles = {
   headerRow: {
@@ -111,7 +112,7 @@ export default function MyEntriesPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("entries")
-        .select("id, slug, title, description, place, status, image:photo_url")
+        .select("id, slug, title, title_km, description, description_km, place, category, status, image:photo_url")
         .eq("owner", userId)
         .order("created_at", { ascending: false });
 
@@ -175,11 +176,10 @@ export default function MyEntriesPage() {
         ) : (
           <div className="entries-grid" style={styles.grid}>
             {visible.map((entry) => {
-              const km = translations.km[entry.slug];
-              const title = lang === "km" && km?.title ? km.title : entry.title;
-              const description =
-                lang === "km" && km?.description ? km.description : entry.description;
-              const place = lang === "km" && km?.place ? km.place : entry.place;
+              const view = localizedEntry(entry, lang);
+              const title = view.title;
+              const description = view.description;
+              const place = view.place;
               const label = t[`status_${entry.status}`] ?? entry.status;
 
               return (
@@ -191,7 +191,7 @@ export default function MyEntriesPage() {
                     </Link>
                   </div>
                   <Link href={`/entries/${entry.id}`} style={styles.cardLink}>
-                    <EntryCard image={entry.image} title={title} description={description} place={place} />
+                    <EntryCard image={entry.image} title={title} description={description} place={place} badge={entry.category ? t[`category_${entry.category}`] : null} />
                   </Link>
                 </div>
               );

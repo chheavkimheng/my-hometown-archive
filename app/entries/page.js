@@ -6,6 +6,7 @@ import translations from "../../data/translations.js";
 import EntryCard from "../../components/EntryCard.js";
 import { createClient } from "../../utils/supabase/client.js";
 import { useLanguage } from "../../context/LanguageContext.js";
+import { localizedEntry } from "../../utils/localize.js";
 import { useScrollReveal } from "../../hooks/useScrollReveal.js";
 
 function SearchIcon() {
@@ -102,7 +103,7 @@ export default function EntriesPage() {
       const supabase = createClient();
       const { data, error } = await supabase
         .from("entries")
-        .select("id, slug, title, description, contributor, place, image:photo_url")
+        .select("id, slug, title, title_km, description, description_km, contributor, place, category, image:photo_url")
         .eq("status", "published")
         .order("created_at", { ascending: false });
 
@@ -122,12 +123,18 @@ export default function EntriesPage() {
   const filteredEntries = entries.filter((entry) => {
     const q = query.trim().toLowerCase();
     const km = translations.km[entry.slug];
-    return (
-      entry.title.toLowerCase().includes(q) ||
-      entry.description.toLowerCase().includes(q) ||
-      km?.title.toLowerCase().includes(q) ||
-      km?.description.toLowerCase().includes(q)
-    );
+    const text = [
+      entry.title,
+      entry.description,
+      entry.title_km,
+      entry.description_km,
+      km?.title,
+      km?.description,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return text.includes(q);
   });
 
   let entriesContent;
@@ -155,15 +162,7 @@ export default function EntriesPage() {
         style={styles.gridWrap}
       >
         {filteredEntries.map((entry) => {
-          const km = translations.km[entry.slug];
-          const displayTitle =
-            lang === "km" && km?.title ? km.title : entry.title;
-          const displayDescription =
-            lang === "km" && km?.description
-              ? km.description
-              : entry.description;
-          const displayPlace =
-            lang === "km" && km?.place ? km.place : entry.place;
+          const view = localizedEntry(entry, lang);
           return (
             <Link
               key={entry.id}
@@ -172,9 +171,10 @@ export default function EntriesPage() {
             >
               <EntryCard
                 {...entry}
-                title={displayTitle}
-                description={displayDescription}
-                place={displayPlace}
+                title={view.title}
+                description={view.description}
+                place={view.place}
+                badge={entry.category ? t[`category_${entry.category}`] : null}
               />
             </Link>
           );
